@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+/taskone/.idea
+/taskone/cmake-build-debug
+/taskone/.idea

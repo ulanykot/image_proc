@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
     }
 
     // Save the modified image
-    image.save_bmp("out.bmp");
+    image.save_bmp("outcm.bmp");
     cout << "Modified image saved as 'out.bmp'" << endl;
 
     return 0;
