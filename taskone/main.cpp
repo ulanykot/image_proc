@@ -104,15 +104,15 @@ void doDiagonalFlip(CImg<unsigned char> &image) {
 //##########################
 
 int main(int argc, char* argv[]) {
+    if (argc < 3) {
+        cout << "Usage: " << argv[0] << " <path to image_file> <command> [param]" << endl;
+        cout << "Commands: --brightness <value>, --contrast <value>, --negative, --hflip, --vflip, --dflip" << endl;
+        return 1;
+    }
 
     string inputImage = argv[1];  // the input image file
     //string outputImage = argv[2]; // the output image file
     string command = argv[2];    // the command (e.g., --brightness or --contrast
-    if (argc < 3) {
-        cout << "Usage: " << argv[0] << " <path to image_file> <command> [param]" << endl;
-        cout << "Commands: --brightness <value>, --contrast <value>, --negative, --hflip" << endl;
-        return 1;
-    }
 
     // Load the image
     CImg<unsigned char> image(inputImage.c_str());
