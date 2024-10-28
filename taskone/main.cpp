@@ -102,24 +102,115 @@ void doDiagonalFlip(CImg<unsigned char> &image) {
     doVerticalFlip(image);
 }
 
+// void doImageShrinking(CImg<unsigned char> &image, float factor) {
+//     if (factor <= 0 || factor >= 1) {
+//         cout << "Invalid factor for shrinking. Must be in range (0, 1)." << endl;
+//         return;
+//     }
+//     int new_width = static_cast<int>(image.width() * factor);
+//     int new_height = static_cast<int>(image.height() * factor);
+//     image.resize(new_width, new_height, -100, -100, 5); // Use bicubic interpolation (method 5)
+// }
+
 void doImageShrinking(CImg<unsigned char> &image, float factor) {
     if (factor <= 0 || factor >= 1) {
         cout << "Invalid factor for shrinking. Must be in range (0, 1)." << endl;
         return;
     }
+
     int new_width = static_cast<int>(image.width() * factor);
     int new_height = static_cast<int>(image.height() * factor);
-    image.resize(new_width, new_height, -100, -100, 5); // Use bicubic interpolation (method 5)
+
+    const int channels = 3; // Amount of channels for RGB image
+
+    CImg<unsigned char> resized_image(new_width, new_height, 1, channels, 0);
+
+    for (int y = 0; y < new_height; ++y) {
+        for (int x = 0; x < new_width; ++x) {
+            int src_x = static_cast<int>(x / factor);
+            int src_y = static_cast<int>(y / factor);
+
+            for (int c = 0; c < channels; ++c) {
+                resized_image(x, y, 0, c) = image(src_x, src_y, 0, c);
+            }
+        }
+    }
+
+    image = resized_image;
 }
+
+// void doImageEnlargement(CImg<unsigned char> &image, float factor) {
+//     if (factor <= 1) {
+//         cout << "Invalid factor for enlargement. Must be greater than 1." << endl;
+//         return;
+//     }
+//     int new_width = static_cast<int>(image.width() * factor);
+//     int new_height = static_cast<int>(image.height() * factor);
+//     image.resize(new_width, new_height, -100, -100, 5); // Use bicubic interpolation (method 5)
+// }
+
+// void doImageEnlargement(CImg<unsigned char> &image, float factor) {
+//     if (factor <= 1) {
+//         cout << "Invalid factor for enlargement. Must be greater than 1." << endl;
+//         return;
+//     }
+//
+//     int new_width = static_cast<int>(image.width() * factor);
+//     int new_height = static_cast<int>(image.height() * factor);
+//
+//     CImg<unsigned char> resized_image(new_width, new_height, 1, image.spectrum(), 0);
+//
+//     for (int y = 0; y < new_height; ++y) {
+//         for (int x = 0; x < new_width; ++x) {
+//             float gx = x / factor;
+//             float gy = y / factor;
+//
+//             int gxi = static_cast<int>(gx);
+//             int gyi = static_cast<int>(gy);
+//
+//             float dx = gx - gxi;
+//             float dy = gy - gyi;
+//
+//             for (int c = 0; c < image.spectrum(); ++c) {
+//                 unsigned char pixel_value =
+//                     (1 - dx) * (1 - dy) * image(gxi, gyi, 0, c) +
+//                     dx * (1 - dy) * image(gxi + 1, gyi, 0, c) +
+//                     (1 - dx) * dy * image(gxi, gyi + 1, 0, c) +
+//                     dx * dy * image(gxi + 1, gyi + 1, 0, c);
+//
+//                 resized_image(x, y, 0, c) = pixel_value;
+//             }
+//         }
+//     }
+//
+//     image = resized_image;
+// }
 
 void doImageEnlargement(CImg<unsigned char> &image, float factor) {
     if (factor <= 1) {
         cout << "Invalid factor for enlargement. Must be greater than 1." << endl;
         return;
     }
+
     int new_width = static_cast<int>(image.width() * factor);
     int new_height = static_cast<int>(image.height() * factor);
-    image.resize(new_width, new_height, -100, -100, 5); // Use bicubic interpolation (method 5)
+
+    const int channels = 3; // Amount of channels for RGB image
+
+    CImg<unsigned char> resized_image(new_width, new_height, 1, channels, 0);
+
+    for (int y = 0; y < new_height; ++y) {
+        for (int x = 0; x < new_width; ++x) {
+            int nearest_x = static_cast<int>(x / factor);
+            int nearest_y = static_cast<int>(y / factor);
+
+            for (int c = 0; c < channels; ++c) {
+                resized_image(x, y, 0, c) = image(nearest_x, nearest_y, 0, c);
+            }
+        }
+    }
+
+    image = resized_image;
 }
 
 void minFilter(CImg<unsigned char> &image, int filter_size) {
@@ -218,7 +309,7 @@ int main(int argc, char* argv[]) {
     }
 
     // Load the image
-    CImg<unsigned char> image(inputImage.c_str());
+    CImg<unsigned char> image((inputImage.data()));
 
     // Apply the appropriate command
     if (command == "--brightness") {
