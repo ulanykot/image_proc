@@ -18,6 +18,10 @@ void help() {
     cout<< "The application's possible commands are:" << endl;
     cout<<"--brightness <value> - the images brightness is increased by a value (of range 0-255) specified." << endl;
     cout<<"--contrast <value> - the images contrast is increased by a value (0-255) specified." << endl;
+    cout<<"--negative - the image output is in negative" << endl;
+    cout<<"--hflip - the image is flipped horizontally" <<endl;
+    cout<<"--vflip - the image is flipped vertically" <<endl;
+    cout<<"--dflip - the image is flipped diagonally" <<endl;
 
 }
 // Function to adjust brightness
@@ -104,6 +108,10 @@ void doDiagonalFlip(CImg<unsigned char> &image) {
 //##########################
 
 int main(int argc, char* argv[]) {
+    if (argv[1] == "--help") {
+        help();
+        return 1;
+    }
     if (argc < 3) {
         cout << "Usage: " << argv[0] << " <path to image_file> <command> [param]" << endl;
         cout << "Commands: --brightness <value>, --contrast <value>, --negative, --hflip, --vflip, --dflip" << endl;
@@ -147,6 +155,7 @@ int main(int argc, char* argv[]) {
     }
     else if (command == "--help") {
         help();
+        return 1;
     }
     else if(command =="--dflip") {
         doDiagonalFlip(image);
@@ -158,7 +167,7 @@ int main(int argc, char* argv[]) {
 
     // Save the modified image
     image.save_bmp("outcm.bmp");
-    cout << "Modified image saved as 'out.bmp'" << endl;
+    cout << "Modified image saved as 'outcm.bmp'" << endl;
 
     return 0;
 }
