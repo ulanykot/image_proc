@@ -11,5 +11,7 @@ add_executable(taskone main.cpp
         FilterOperations.cpp
         FilterOperations.h
         CommandLineInterface.cpp
-        CommandLineInterface.h)
+        CommandLineInterface.h
+        SimilarityMeasures.cpp
+        SimilarityMeasures.h)
 include_directories(cmake-build-debug/img/)
