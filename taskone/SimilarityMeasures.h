@@ -9,11 +9,11 @@
 
 class SimilarityMeasures {
 public:
-  double meanSquare(cimg_library::CImg<unsigned char>& first_image, cimg_library::CImg<unsigned char>& second_image);
-  double peakMeanSquare(cimg_library::CImg<unsigned char>& first_image, cimg_library::CImg<unsigned char>& second_image);
-  double signalToNoiseRatio(cimg_library::CImg<unsigned char>& first_image, cimg_library::CImg<unsigned char>& second_image);
-  double peakSignalToNoiseRatio(cimg_library::CImg<unsigned char>& first_image, cimg_library::CImg<unsigned char>& second_image);
-  double maximumDifference(cimg_library::CImg<unsigned char>& first_image, cimg_library::CImg<unsigned char>& second_image);
+  static double meanSquare(cimg_library::CImg<unsigned char>& first_image, cimg_library::CImg<unsigned char>& second_image);
+  static double peakMeanSquare(cimg_library::CImg<unsigned char>& first_image, cimg_library::CImg<unsigned char>& second_image);
+  static double signalToNoiseRatio(cimg_library::CImg<unsigned char>& first_image, cimg_library::CImg<unsigned char>& second_image);
+  static double peakSignalToNoiseRatio(cimg_library::CImg<unsigned char>& first_image, cimg_library::CImg<unsigned char>& second_image);
+  static double maximumDifference(cimg_library::CImg<unsigned char>& first_image, cimg_library::CImg<unsigned char>& second_image) ;
 };
 
 

@@ -10,15 +10,15 @@
 #include "BasicOperations.h"
 #include "CImg.h"
 #include "FilterOperations.h"
+#include "SimilarityMeasures.h"
 
 void CommandLineInterface::parseCommand(int argc, char *argv[]) {
     if (argc < 3) {
-        CommandLineInterface::help();
+        help();
         return;
     }
 
     std::string inputImage = argv[1];  // the input image file
-    //string outputImage = argv[2]; // the output image file
     std::string command = argv[2];    // the command (e.g., --brightness or --contrast
 
     // Load the image
@@ -88,6 +88,36 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
     else if(command =="--median") {
         int filter_size = (argc >= 4) ? atoi(argv[3]) : 3; // default filter size is 3
         FilterOperations::medianFilter(image, filter_size);
+    }
+    else if(command =="--mse") {
+        std::string outputImage = argv[3]; // the output image file
+        cimg_library::CImg<unsigned char> outImage(outputImage.c_str());
+        std::cout<<SimilarityMeasures::meanSquare(image,outImage);
+        return;
+    }
+    else if(command =="--pmse") {
+        std::string outputImage = argv[3]; // the output image file
+        cimg_library::CImg<unsigned char> outImage(outputImage.c_str());
+        std::cout<<SimilarityMeasures::peakMeanSquare(image,outImage);
+        return;
+    }
+    else if(command =="--snr") {
+        std::string outputImage = argv[3]; // the output image file
+        cimg_library::CImg<unsigned char> outImage(outputImage.c_str());
+        std::cout<<SimilarityMeasures::signalToNoiseRatio(image,outImage);
+        return;
+    }
+    else if(command =="--psnr") {
+        std::string outputImage = argv[3]; // the output image file
+        cimg_library::CImg<unsigned char> outImage(outputImage.c_str());
+        std::cout<<SimilarityMeasures::peakSignalToNoiseRatio(image,outImage);
+        return;
+    }
+    else if(command =="--md") {
+        std::string outputImage = argv[3]; // the output image file
+        cimg_library::CImg<unsigned char> outImage(outputImage.c_str());
+        std::cout<<SimilarityMeasures::maximumDifference(image,outImage);
+        return;
     }
     else {
         std::cout << "Unknown command: " << command << std::endl;
