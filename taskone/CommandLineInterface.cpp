@@ -133,16 +133,22 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
 void CommandLineInterface::help() {
         std::cout << "Usage: application <path to image_file> <command> [param]" << std::endl;
         std::cout << "Possible commands: " << std::endl;
-        std::cout << "--brightness <value>  : Adjusts the image's brightness by adding a specified integer value (0-255) to each pixel." << std::endl;
-        std::cout << "--contrast <value>    : Adjusts the image's contrast. A value greater than 1 increases contrast, while a value between 0 and 1 decreases it." << std::endl;
-        std::cout << "--negative            : Inverts the colors of the image, creating a negative effect." << std::endl;
-        std::cout << "--hflip               : Flips the image horizontally, mirroring it across the vertical axis." << std::endl;
-        std::cout << "--vflip               : Flips the image vertically, mirroring it across the horizontal axis." << std::endl;
-        std::cout << "--dflip               : Flips the image both horizontally and vertically, resulting in a diagonal flip." << std::endl;
-        std::cout << "--shrink <factor>     : Shrinks the image by a specified factor (0-1), reducing its dimensions. E.g., 0.5 reduces the size by 50%." << std::endl;
-        std::cout << "--enlarge <factor>    : Enlarges the image by a specified factor (>1), increasing its dimensions. E.g., 2 doubles the image size." << std::endl;
-        std::cout << "--min <filter_size>   : Applies a minimum filter of specified size (odd integer, e.g., 3, 5) to reduce noise by keeping the minimum pixel value in a neighborhood." << std::endl;
-        std::cout << "--max <filter_size>   : Applies a maximum filter of specified size (odd integer, e.g., 3, 5) to enhance bright spots by keeping the maximum pixel value in a neighborhood." << std::endl;
-        std::cout << "--median <filter_size>: Applies a median filter of specified size (odd integer, e.g., 3, 5) to reduce noise by setting each pixel to the median of its neighborhood." << std::endl;
-    }
+        std::cout << "--brightness <value>      - Adjusts the image's brightness by adding a specified integer value (0-255) to each pixel." << std::endl;
+        std::cout << "--contrast <value>        - Adjusts the image's contrast. A value greater than 1 increases contrast, while a value between 0 and 1 decreases it." << std::endl;
+        std::cout << "--negative                - Inverts the colors of the image, creating a negative effect." << std::endl;
+        std::cout << "--hflip                   - Flips the image horizontally, mirroring it across the vertical axis." << std::endl;
+        std::cout << "--vflip                   - Flips the image vertically, mirroring it across the horizontal axis." << std::endl;
+        std::cout << "--dflip                   - Flips the image both horizontally and vertically, resulting in a diagonal flip." << std::endl;
+        std::cout << "--shrink <factor>         - Shrinks the image by a specified factor (0-1), reducing its dimensions. E.g., 0.5 reduces the size by 50%." << std::endl;
+        std::cout << "--enlarge <factor>        - Enlarges the image by a specified factor (>1), increasing its dimensions. E.g., 2 doubles the image size." << std::endl;
+        std::cout << "--min <filter_size>       - Applies a minimum filter of specified size (odd integer, e.g., 3, 5) to reduce noise by keeping the minimum pixel value in a neighborhood." << std::endl;
+        std::cout << "--max <filter_size>       - Applies a maximum filter of specified size (odd integer, e.g., 3, 5) to enhance bright spots by keeping the maximum pixel value in a neighborhood." << std::endl;
+        std::cout << "--median <filter_size>    - Applies a median filter of specified size (odd integer, e.g., 3, 5) to reduce noise by setting each pixel to the median of its neighborhood." << std::endl;
+        std::cout<< "--mse <second_file>        - Calculates the mean square error in respect to the first file given as a double."<< std::endl;
+        std::cout<< "--pmse <second_file>       - Calculates the peak mean square error in respect to the first file given as a double."<< std::endl;
+        std::cout<< "--snr <second_file>        - Calculates the signal to noise ratio in respect to the first file given as a double."<< std::endl;
+        std::cout<< "--psnr <second_file>       - Calculates the peak signal to noise ratio in respect to the first file given as a double."<< std::endl;
+        std::cout<< "--md <second_file>         - Calculates the maximum difference in respect to the first file given as a double."<< std::endl;
+
+}
 

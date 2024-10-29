@@ -1,8 +1,5 @@
 #include "CImg.h"
 #include <iostream>
-#include <string>
-#include <cstdlib> // for std::atoi (ask if allowed)
-#include <vector>
 
 #include "CommandLineInterface.h"
 
