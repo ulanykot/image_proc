@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include "BasicOperations.h"
 #include "CImg.h"
@@ -18,137 +19,91 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
         return;
     }
 
-    std::string inputImage = argv[1];  // the input image file
-    std::string command = argv[2];    // the command (e.g., --brightness or --contrast
+    std::string inputImage = argv[1];
+    std::string outputImage = argv[2];
+    std::vector<std::string> commands;
 
-    // Load the image
+    for (int i = 3; i < argc; ++i) {
+        commands.push_back(argv[i]);
+    }
+
     cimg_library::CImg<unsigned char> image(inputImage.c_str());
+    cimg_library::CImg<unsigned char> outImage;
+    bool comparisonImageLoaded = false;
 
-
-    // Apply the appropriate command
-    if (command == "--brightness") {
-        if (argc < 4) {
-            std::cout << "Error: Missing parameter for brightness adjustment." << std::endl;
-            return;
+    int index = 3; // Starting from argv[3]
+    while (index < argc) {
+        std::string command = argv[index];
+        if (command == "--brightness" || command == "--contrast" || command == "--shrink" || command == "--enlarge" || command == "--min" || command == "--max" || command == "--median") {
+            if (index + 1 >= argc) {
+                std::cout << "Error: Missing parameter for " << command << " adjustment." << std::endl;
+                return;
+            }
+            int parameter = std::atoi(argv[++index]);  // Get the parameter following the command
+            if (command == "--brightness") {
+                BasicOperations::doBrightness(image, parameter);
+            } else if (command == "--contrast") {
+                BasicOperations::doContrast(image, static_cast<float>(parameter));
+            } else if (command == "--shrink") {
+                BasicOperations::doImageShrinking(image, static_cast<float>(parameter));
+            } else if (command == "--enlarge") {
+                BasicOperations::doImageEnlargement(image, static_cast<float>(parameter));
+            } else if (command == "--min") {
+                FilterOperations::minFilter(image, parameter);
+            } else if (command == "--max") {
+                FilterOperations::maxFilter(image, parameter);
+            } else if (command == "--median") {
+                FilterOperations::medianFilter(image, parameter);
+            }
+        } else if (command == "--negative") {
+            BasicOperations::doNegative(image);
+        } else if (command == "--hflip") {
+            BasicOperations::doHorizontalFlip(image);
+        } else if (command == "--vflip") {
+            BasicOperations::doVerticalFlip(image);
+        } else if (command == "--dflip") {
+            BasicOperations::doDiagonalFlip(image);
+        } else if (command == "--mse" || command == "--pmse" || command == "--snr" || command == "--psnr" || command == "--md") {
+            if (!comparisonImageLoaded) {
+                outImage.load(outputImage.c_str());
+                comparisonImageLoaded = true;
+            }
+            if (command == "--mse") {
+                std::cout << "Mean square error: " << SimilarityMeasures::meanSquare(image, outImage) << std::endl;
+            } else if (command == "--pmse") {
+                std::cout << "Peak mean square error: " << SimilarityMeasures::peakMeanSquare(image, outImage) << std::endl;
+            } else if (command == "--snr") {
+                std::cout << "Signal to noise ratio: " << SimilarityMeasures::signalToNoiseRatio(image, outImage) << std::endl;
+            } else if (command == "--psnr") {
+                std::cout << "Peak signal to noise ratio: " << SimilarityMeasures::peakSignalToNoiseRatio(image, outImage) << std::endl;
+            } else if (command == "--md") {
+                std::cout << "Max difference: " << SimilarityMeasures::maximumDifference(image, outImage) << std::endl;
+            }
+        } else {
+            std::cout << "Unknown command: " << command << std::endl;
         }
-        std::string param = argv[3]; // the parameter for the command (e.g., value to adjust
-        int brightnessValue = atoi(param.c_str()); // Convert param to integer
-        BasicOperations::doBrightness(image, brightnessValue);
-    }
-    else if (command == "--contrast") {
-        if (argc < 4) {
-            std::cout << "Error: Missing parameter for contrast adjustment." << std::endl;
-            return;
-        }
-        std::string param = argv[3]; // the parameter for the command (e.g., value to adjust
-        float contrastFactor = atof(param.c_str()); // Convert param to float
-        BasicOperations::doContrast(image, contrastFactor);
-    }
-    else if(command == "--negative") {
-        BasicOperations::doNegative(image);
-    }
-    else if(command =="--hflip") {
-        BasicOperations::doHorizontalFlip(image);
-    }
-    else if(command =="--vflip") {
-        BasicOperations::doVerticalFlip(image);
-    }
-    else if(command == "--help") {
-        CommandLineInterface::help();
-    }
-    else if(command =="--dflip") {
-        BasicOperations::doDiagonalFlip(image);
-    }
-    else if(command =="--shrink") {
-        if (argc < 4) {
-            std::cout << "Error: Missing parameter for shrinking image." << std::endl;
-            return;
-        }
-        std::string param = argv[3];
-        float shrinkFactor = atof(param.c_str()); // Convert param to float
-        BasicOperations::doImageShrinking(image, shrinkFactor);
-    }
-    else if(command =="--enlarge") {
-        if (argc < 4) {
-            std::cout << "Error: Missing parameter for enlarging image." << std::endl;
-            return;
-        }
-        std::string param = argv[3];
-        float enlargeFactor = atof(param.c_str()); // Convert param to float
-        BasicOperations::doImageEnlargement(image, enlargeFactor);
-    }
-    else if(command =="--min") {
-        int filter_size = (argc >= 4) ? atoi(argv[3]) : 3; // default filter size is 3
-        FilterOperations::minFilter(image, filter_size);
-    }
-    else if(command =="--max") {
-        int filter_size = (argc >= 4) ? atoi(argv[3]) : 3; // default filter size is 3
-        FilterOperations::maxFilter(image, filter_size);
-    }
-    else if(command =="--median") {
-        int filter_size = (argc >= 4) ? atoi(argv[3]) : 3; // default filter size is 3
-        FilterOperations::medianFilter(image, filter_size);
-    }
-    else if(command =="--mse") {
-        std::string outputImage = argv[3]; // the output image file
-        cimg_library::CImg<unsigned char> outImage(outputImage.c_str());
-        std::cout<<SimilarityMeasures::meanSquare(image,outImage);
-        return;
-    }
-    else if(command =="--pmse") {
-        std::string outputImage = argv[3]; // the output image file
-        cimg_library::CImg<unsigned char> outImage(outputImage.c_str());
-        std::cout<<SimilarityMeasures::peakMeanSquare(image,outImage);
-        return;
-    }
-    else if(command =="--snr") {
-        std::string outputImage = argv[3]; // the output image file
-        cimg_library::CImg<unsigned char> outImage(outputImage.c_str());
-        std::cout<<SimilarityMeasures::signalToNoiseRatio(image,outImage);
-        return;
-    }
-    else if(command =="--psnr") {
-        std::string outputImage = argv[3]; // the output image file
-        cimg_library::CImg<unsigned char> outImage(outputImage.c_str());
-        std::cout<<SimilarityMeasures::peakSignalToNoiseRatio(image,outImage);
-        return;
-    }
-    else if(command =="--md") {
-        std::string outputImage = argv[3]; // the output image file
-        cimg_library::CImg<unsigned char> outImage(outputImage.c_str());
-        std::cout<<SimilarityMeasures::maximumDifference(image,outImage);
-        return;
-    }
-    else {
-        std::cout << "Unknown command: " << command << std::endl;
-        return;
+        ++index;  // Move to the next argument
     }
 
-    // Save the modified image
-    image.save_bmp("outcm.bmp");
-    std::cout << "Modified image saved as 'outcm.bmp'" << std::endl;
-
+    if (!comparisonImageLoaded) {
+        image.save(outputImage.c_str());
+        std::cout << "Modified image saved as '" << outputImage << "'" << std::endl;
+    }
 }
 
 void CommandLineInterface::help() {
-        std::cout << "Usage: application <path to image_file> <command> [param]" << std::endl;
-        std::cout << "Possible commands: " << std::endl;
-        std::cout << "--brightness <value>      - Adjusts the image's brightness by adding a specified integer value (0-255) to each pixel." << std::endl;
-        std::cout << "--contrast <value>        - Adjusts the image's contrast. A value greater than 1 increases contrast, while a value between 0 and 1 decreases it." << std::endl;
-        std::cout << "--negative                - Inverts the colors of the image, creating a negative effect." << std::endl;
-        std::cout << "--hflip                   - Flips the image horizontally, mirroring it across the vertical axis." << std::endl;
-        std::cout << "--vflip                   - Flips the image vertically, mirroring it across the horizontal axis." << std::endl;
-        std::cout << "--dflip                   - Flips the image both horizontally and vertically, resulting in a diagonal flip." << std::endl;
-        std::cout << "--shrink <factor>         - Shrinks the image by a specified factor (0-1), reducing its dimensions. E.g., 0.5 reduces the size by 50%." << std::endl;
-        std::cout << "--enlarge <factor>        - Enlarges the image by a specified factor (>1), increasing its dimensions. E.g., 2 doubles the image size." << std::endl;
-        std::cout << "--min <filter_size>       - Applies a minimum filter of specified size (odd integer, e.g., 3, 5) to reduce noise by keeping the minimum pixel value in a neighborhood." << std::endl;
-        std::cout << "--max <filter_size>       - Applies a maximum filter of specified size (odd integer, e.g., 3, 5) to enhance bright spots by keeping the maximum pixel value in a neighborhood." << std::endl;
-        std::cout << "--median <filter_size>    - Applies a median filter of specified size (odd integer, e.g., 3, 5) to reduce noise by setting each pixel to the median of its neighborhood." << std::endl;
-        std::cout<< "--mse <second_file>        - Calculates the mean square error in respect to the first file given as a double."<< std::endl;
-        std::cout<< "--pmse <second_file>       - Calculates the peak mean square error in respect to the first file given as a double."<< std::endl;
-        std::cout<< "--snr <second_file>        - Calculates the signal to noise ratio in respect to the first file given as a double."<< std::endl;
-        std::cout<< "--psnr <second_file>       - Calculates the peak signal to noise ratio in respect to the first file given as a double."<< std::endl;
-        std::cout<< "--md <second_file>         - Calculates the maximum difference in respect to the first file given as a double."<< std::endl;
-
+    std::cout << "Usage: application <input_image_file> <output_image_file> <command(s)> [param]" << std::endl;
+    std::cout << "Possible commands: " << std::endl;
+    std::cout << "--brightness <value>      - Adjusts the image's brightness." << std::endl;
+    std::cout << "--contrast <value>        - Adjusts the image's contrast." << std::endl;
+    std::cout << "--negative                - Inverts the colors of the image." << std::endl;
+    std::cout << "--hflip                   - Flips the image horizontally." << std::endl;
+    std::cout << "--vflip                   - Flips the image vertically." << std::endl;
+    std::cout << "--dflip                   - Diagonal flip of the image." << std::endl;
+    std::cout << "--shrink <factor>         - Shrinks the image." << std::endl;
+    std::cout << "--enlarge <factor>        - Enlarges the image." << std::endl;
+    std::cout << "--min <filter_size>       - Applies a minimum filter." << std::endl;
+    std::cout << "--max <filter_size>       - Applies a maximum filter." << std::endl;
+    std::cout << "--median <filter_size>    - Applies a median filter." << std::endl;
+    std::cout << "--mse, --pmse, --snr, --psnr, --md - Multiple similarity commands can be used together to compare images." << std::endl;
 }
-

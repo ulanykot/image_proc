@@ -46,25 +46,25 @@ void FilterOperations::minFilter(cimg_library::CImg<unsigned char>& image, int f
     image = filteredImage;
 }
 
-void FilterOperations::maxFilter(cimg_library::CImg<unsigned char>& image, int windowSize) {
-    if (windowSize % 2 == 0) {
-        throw std::invalid_argument("Window size must be odd");
+void FilterOperations::maxFilter(cimg_library::CImg<unsigned char>& image, int filter_size) {
+    if (filter_size % 2 == 0) {
+        throw std::invalid_argument("Filter size must be odd");
     }
 
     cimg_library::CImg<unsigned char> filteredImage = image; // Temporary image for storing the result
 
-    int halfWindowSize = windowSize / 2;
-    int windowArea = windowSize * windowSize;
+    int half_size = filter_size / 2;
+    int windowArea = filter_size * filter_size;
 
     for (int c = 0; c < image.spectrum(); ++c) { // Iterate over each color channel
-        for (int x = halfWindowSize; x < image.width() - halfWindowSize; ++x) {
-            for (int y = halfWindowSize; y < image.height() - halfWindowSize; ++y) {
+        for (int x = half_size; x < image.width() - half_size; ++x) {
+            for (int y = half_size; y < image.height() - half_size; ++y) {
                 int* window = new int[windowArea];
                 int windowIndex = 0;
 
                 // Collect neighborhood values
-                for (int i = x - halfWindowSize; i <= x + halfWindowSize; ++i) {
-                    for (int j = y - halfWindowSize; j <= y + halfWindowSize; ++j) {
+                for (int i = x - half_size; i <= x + half_size; ++i) {
+                    for (int j = y - half_size; j <= y + half_size; ++j) {
                         window[windowIndex++] = image(i, j, 0, c);
                     }
                 }
@@ -79,7 +79,6 @@ void FilterOperations::maxFilter(cimg_library::CImg<unsigned char>& image, int w
 
     image = filteredImage;
 }
-
 
 void FilterOperations::medianFilter(cimg_library::CImg<unsigned char> &image, int filter_size) {
     int width = image.width();

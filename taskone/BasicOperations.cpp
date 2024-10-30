@@ -13,7 +13,7 @@ void BasicOperations::doBrightness(cimg_library::CImg<unsigned char> &image, int
     for (int x = 0; x < image.width(); x++) {
         for (int y = 0; y < image.height(); y++) {
             for (int c = 0; c < image.spectrum(); c++) {
-                int newVal = std::max(0, std::min(255, image(x, y, c) + value));
+                int newVal = std::max(0, std::min(255, image(x, y,0,c) + value));
                 image(x, y, c) = newVal;
             }
         }
@@ -27,7 +27,7 @@ void BasicOperations::doContrast(cimg_library::CImg<unsigned char> &image, float
     for (int x = 0; x < image.width(); x++) {
         for (int y = 0; y < image.height(); y++) {
             for (int c = 0; c < image.spectrum(); c++) {
-                int newVal = std::max(0, std::min(255, static_cast<int>((128 + factor * (image(x, y, c) - 128)))));
+                int newVal = std::max(0, std::min(255, static_cast<int>((128 + factor * (image(x, y, 0, c) - 128)))));
                 image(x, y, c) = static_cast<unsigned char>(newVal);
             }
         }
@@ -54,7 +54,7 @@ void BasicOperations::doHorizontalFlip(cimg_library::CImg<unsigned char> &image)
         for (int y = 0; y < height; y++) {
             for (int c = 0; c < image.spectrum(); c++) {
                 // Swap the pixel at (x, y) with its horizontally mirrored pixel at (width - 1 - x, y)
-                std::swap(image(x, y, c), image(width - 1 - x, y, c));
+                std::swap(image(x, y, 0, c), image(width - 1 - x, y, 0, c));
             }
         }
     }
@@ -67,7 +67,7 @@ void BasicOperations::doVerticalFlip(cimg_library::CImg<unsigned char> &image) {
     for (int y = 0; y < height / 2; y++) {
         for(int x = 0; x < width; x++) {
             for (int c = 0; c < image.spectrum(); c++) {
-                std::swap(image(x, y, c), image(x, height- 1 - y, c));
+                std::swap(image(x, y, c), image(x, height - 1 - y, c));
             }
         }
     }
