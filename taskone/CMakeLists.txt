@@ -4,7 +4,16 @@ project(taskone)
 set(CMAKE_CXX_STANDARD 20)
 set(SOURCE_FILES
     CImg.h
-        cmake-build-debug/img/lenac.bmp
 )
-add_executable(taskone main.cpp)
+add_executable(taskone main.cpp
+        BasicOperations.cpp
+        BasicOperations.h
+        FilterOperations.cpp
+        FilterOperations.h
+        CommandLineInterface.cpp
+        CommandLineInterface.h
+        SimilarityMeasures.cpp
+        SimilarityMeasures.h
+        HistogramComputations.cpp
+        HistogramComputations.h)
 include_directories(cmake-build-debug/img/)
