@@ -57,7 +57,7 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
                 FilterOperations::medianFilter(image, atoi(parameter.c_str()));
             }
             else if(command == "--histogram") {
-                cimg_library::CImg<unsigned char> newImage = HistogramComputations::drawAHistogram(image,atoi(parameter.c_str()));
+                cimg_library::CImg<unsigned char> newImage = HistogramComputations::drawHistogram(image,atoi(parameter.c_str()));
                 newImage.save(outputImage.c_str());
                 std::cout<<"Histogram representation in the form of an image saved." <<std::endl;
                 return;
