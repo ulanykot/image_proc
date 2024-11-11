@@ -19,7 +19,7 @@ std::vector<int> HistogramComputations::calcSumHistogram(std::vector<int> &histo
     std::vector<int> sum(256, 0);
     sum[0] = histogram[0];
     for (int x = 1; x < histogram.size(); x++) {
-        sum[x] += sum[x -1] + histogram[x];
+        sum[x] = sum[x - 1] + histogram[x];
     }
     return sum;
 }
@@ -51,24 +51,25 @@ std::vector<int> HistogramComputations::calcPowerDensityFunction(std::vector<int
         int cumulativeSum = histogramSum[f];
         float resultCubed = thirdPowerOfGmin + (thirdPowerOfGmax - thirdPowerOfGmin) * (static_cast<float>(cumulativeSum)/numberOfPixels);
         int newBrightness = static_cast<int>(std::round(std::pow(resultCubed, 3.0f)));
-        powerDensityFunction[f] = std::max(gmin, std::min(newBrightness, gmax));
+        powerDensityFunction[f] = std::min(std::max(newBrightness, gmin), gmax);
     }
     return powerDensityFunction;
 }
 
-void HistogramComputations::applyPowerDensityFunction(cimg_library::CImg<unsigned char>& image, const std::vector<int>& powerDensityFunction, int channel) {
+void HistogramComputations::applyPowerDensityFunction(cimg_library::CImg<unsigned char>& image, const std::vector<int>& powerDensityFunction) {
     cimg_forXY(image, x, y) {
-        int originalBrightness = image(x, y, 0, channel);
-        image(x, y, 0, channel) = powerDensityFunction[originalBrightness];
+        for (int c = 0; c < image.spectrum(); c++) {
+            int originalBrightness = image(x, y, 0, c);
+            image(x, y, 0, c) = powerDensityFunction[originalBrightness];
+        }
     }
 }
 
 void HistogramComputations::equalizedHistogramPower(
-    cimg_library::CImg<unsigned char> &image, int channel, int gmin, int gmax) {
-    std::vector<int> histogram = HistogramComputations::calcHistogram(image, channel);
-    std::vector<int> cumulativeHistogram = HistogramComputations::calcSumHistogram(histogram);
+    cimg_library::CImg<unsigned char> &image, int gmin, int gmax) {
+    std::vector<int> histogram = calcHistogram(image, 0);
+    std::vector<int> cumulativeHistogram = calcSumHistogram(histogram);
     int numberOfPixels = image.width() * image.height();
     std::vector<int> powerDensityFunction = calcPowerDensityFunction(cumulativeHistogram,numberOfPixels, gmin, gmax);
-    applyPowerDensityFunction(image,powerDensityFunction,channel);
+    applyPowerDensityFunction(image,powerDensityFunction);
 }
-
