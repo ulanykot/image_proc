@@ -5,6 +5,7 @@
 #include "HistogramComputations.h"
 
 std::vector<int> HistogramComputations::calcHistogram(cimg_library::CImg<unsigned char> &image, int channel) {
+    //TODO make the size of the vector follow the min and max intensities in the image
     std::vector<int> histogram(256, 0);
     for (int x = 0; x < image.width(); x++) {
         for (int y = 0; y < image.height(); y++) {
@@ -16,6 +17,7 @@ std::vector<int> HistogramComputations::calcHistogram(cimg_library::CImg<unsigne
 }
 
 std::vector<int> HistogramComputations::calcSumHistogram(std::vector<int> &histogram) {
+    //TODO make the size of the vector follow the min and max intensities in the image
     std::vector<int> sum(256, 0);
     sum[0] = histogram[0];
     for (int x = 1; x < histogram.size(); x++) {

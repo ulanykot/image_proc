@@ -15,5 +15,7 @@ add_executable(taskone main.cpp
         SimilarityMeasures.cpp
         SimilarityMeasures.h
         HistogramComputations.cpp
-        HistogramComputations.h)
+        HistogramComputations.h
+        ImageCharacteristics.cpp
+        ImageCharacteristics.h)
 include_directories(cmake-build-debug/img/)
