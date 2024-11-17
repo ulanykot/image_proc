@@ -11,6 +11,7 @@ class CommandLineInterface {
 public:
     static void help();
     static void parseCommand(int argc, char* argv[]);
+    static void printMatrix(int h1[3][3], int h2[3][3], int h3[3][3]);
 };
 
 

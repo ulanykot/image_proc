@@ -13,6 +13,7 @@
 #include "FilterOperations.h"
 #include "HistogramComputations.h"
 #include "SimilarityMeasures.h"
+#include "SpatialOperations.h"
 
 void CommandLineInterface::parseCommand(int argc, char *argv[]) {
     if (argc < 3) {
@@ -36,7 +37,7 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
     while (index < argc) {
         std::string command = argv[index];
         if (command == "--brightness" || command == "--contrast" || command == "--shrink" || command == "--enlarge" || command == "--min"
-            || command == "--max" || command == "--median"|| command == "--histogram" || command == "--hpower" || command == "--orosenfeld") {
+            || command == "--max" || command == "--median"|| command == "--histogram" || command == "--hpower" || command == "--orosenfeld" || command == "--sedgesharp") {
             if (index + 1 >= argc) {
                 std::cout << "Error: Missing parameter for " << command << " adjustment." << std::endl;
                 return;
@@ -57,8 +58,11 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
             } else if (command == "--median") {
                 FilterOperations::medianFilter(image, atoi(parameter.c_str()));
             }
+            else if(command == "--sedgesharp") {
+                SpatialOperations::edgeSharpening(image, atoi(parameter.c_str()));
+            }
             else if (command == "--orosenfeld") {
-                FilterOperations::rosenfeldOperator(image, atoi(parameter.c_str()));
+                SpatialOperations::rosenfeldOperator(image, atoi(parameter.c_str()));
             }
             else if (command == "--hpower") {
                 if (index + 1 >= argc) {
@@ -137,4 +141,24 @@ void CommandLineInterface::help() {
     std::cout << "--max <filter_size>       - Applies a maximum filter." << std::endl;
     std::cout << "--median <filter_size>    - Applies a median filter." << std::endl;
     std::cout << "--mse, --pmse, --snr, --psnr, --md - Multiple similarity commands can be used together to compare images." << std::endl;
+    std::cout<<"--sedgesharp <value>        - Applies a edge sharpening mask. The available values are 1, 2, 3. The matrices look as follows:" << std::endl;
+    printMatrix(SpatialOperations::h1, SpatialOperations::h2, SpatialOperations::h3);
+}
+
+void CommandLineInterface::printMatrix(int h1[3][3], int h2[3][3], int h3[3][3]) {
+    std::cout << "Matrix 1\t\t\tMatrix 2\t\t\tMatrix 3" << std::endl; // Headers for clarity
+    for (int i = 0; i < 3; ++i) { // Loop through rows
+        for (int j = 0; j < 3; ++j) { // Print row of h1
+            std::cout << h1[i][j] << "\t";
+        }
+        std::cout << "\t"; // Space between matrices
+        for (int j = 0; j < 3; ++j) { // Print row of h2
+            std::cout << h2[i][j] << "\t";
+        }
+        std::cout << "\t"; // Space between matrices
+        for (int j = 0; j < 3; ++j) { // Print row of h3
+            std::cout << h3[i][j] << "\t";
+        }
+        std::cout << std::endl; // Move to next row
+    }
 }
