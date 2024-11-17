@@ -9,7 +9,7 @@
 
 #include "HistogramComputations.h"
 
-double ImageCharacteristics::mean(cimg_library::CImg<unsigned char> image) {
+double ImageCharacteristics::meanFunction(cimg_library::CImg<unsigned char> &image) {
    std::vector<int> histogram = HistogramComputations::calcHistogram(image,0);
    double sum = 0;
    double mean = 0;
@@ -21,11 +21,11 @@ double ImageCharacteristics::mean(cimg_library::CImg<unsigned char> image) {
    return mean;
 }
 
-double ImageCharacteristics::variance(cimg_library::CImg<unsigned char> image) {
+double ImageCharacteristics::variance(cimg_library::CImg<unsigned char> &image) {
    std::vector<int> histogram = HistogramComputations::calcHistogram(image,0);
    double sum = 0;
    double variance = 0;
-   int mean = mean(image);
+   int mean = meanFunction(image);
    int numberOfPixels = image.height() * image.width();
    for (int i = 0; i < histogram.size(); i++) {
       sum += pow(i - mean, 2.0) * (histogram[i]);
@@ -34,45 +34,45 @@ double ImageCharacteristics::variance(cimg_library::CImg<unsigned char> image) {
    return pow(variance, 2.0);
 }
 
-double ImageCharacteristics::standardDeviation(cimg_library::CImg<unsigned char> image) {
-   return sqrt(variance(std::move(image)));
+double ImageCharacteristics::standardDeviation(cimg_library::CImg<unsigned char> &image) {
+   return sqrt(variance(image));
 }
 
-double ImageCharacteristics::variationCoefficient(cimg_library::CImg<unsigned char> image) {
-   double mean = mean(image);
-   double standardDeviation = standardDeviation(std::move(image));
-   return standardDeviation/mean;
+double ImageCharacteristics::variationCoefficient(cimg_library::CImg<unsigned char> &image) {
+   double mean = meanFunction(image);
+   double standardDev = standardDeviation(image);
+   return standardDev/mean;
 }
 
-double ImageCharacteristics::asymmetryCoefficient(cimg_library::CImg<unsigned char> image) {
+double ImageCharacteristics::asymmetryCoefficient(cimg_library::CImg<unsigned char> &image) {
    std::vector<int> histogram = HistogramComputations::calcHistogram(image,0);
-   double mean = mean(image);
-   double standardDeviation = standardDeviation(std::move(image));
+   double mean = meanFunction(image);
+   double standardDev = standardDeviation(image);
    int numberOfPixels = image.height() * image.width();
    double asymmetryCoefficient = 0;
    double sum = 0;
    for (int i = 0; i < histogram.size(); i++) {
       sum += pow(i - mean, 3.0) * (histogram[i]);
    }
-   asymmetryCoefficient = sum/numberOfPixels*pow(standardDeviation, 1.0/3.0);
+   asymmetryCoefficient = sum/numberOfPixels*pow(standardDev, 1.0/3.0);
    return asymmetryCoefficient;
 }
 
-double ImageCharacteristics::flatteningCoefficient(cimg_library::CImg<unsigned char> image) {
+double ImageCharacteristics::flatteningCoefficient(cimg_library::CImg<unsigned char> &image) {
    std::vector<int> histogram = HistogramComputations::calcHistogram(image,0);
-   double mean = mean(image);
-   double standardDeviation = standardDeviation(std::move(image));
+   double mean = meanFunction(image);
+   double standardDev = standardDeviation(image);
    int numberOfPixels = image.height() * image.width();
    double flatteningCoefficient = 0;
    double sum = 0;
    for (int i = 0; i < histogram.size(); i++) {
       sum += pow(i - mean, 4.0)*(histogram[i]) - 3;
    }
-   flatteningCoefficient = sum/numberOfPixels*pow(standardDeviation, 1.0/4.0);
+   flatteningCoefficient = sum/numberOfPixels*pow(standardDev, 1.0/4.0);
    return flatteningCoefficient;
 }
 
-double ImageCharacteristics::variationCoefficient2(cimg_library::CImg<unsigned char> image) {
+double ImageCharacteristics::variationCoefficient2(cimg_library::CImg<unsigned char> &image) {
    std::vector<int> histogram = HistogramComputations::calcHistogram(image,0);
    double sumAbsolute = 0;
    double numberOfPixels = image.height() * image.width();
@@ -84,7 +84,7 @@ double ImageCharacteristics::variationCoefficient2(cimg_library::CImg<unsigned c
    return variationCoefficient2;
 }
 
-double ImageCharacteristics::informationSourceEntropy(cimg_library::CImg<unsigned char> image) {
+double ImageCharacteristics::informationSourceEntropy(cimg_library::CImg<unsigned char> &image) {
    double numberOfPixels = image.height() * image.width();
    double sum = 0;
    double informationSourceEntropy = 0;

@@ -8,8 +8,8 @@
 #include <vector>
 
 void FilterOperations::minFilter(cimg_library::CImg<unsigned char>& image, int filter_size) {
-    if (filter_size % 2 == 0) {
-        throw std::invalid_argument("Filter size must be odd");
+    if (filter_size % 2 == 0 || filter_size < 0 ) {
+        throw std::invalid_argument("Filter size must be odd and positive.");
     }
 
     int width = image.width();
@@ -47,8 +47,8 @@ void FilterOperations::minFilter(cimg_library::CImg<unsigned char>& image, int f
 }
 
 void FilterOperations::maxFilter(cimg_library::CImg<unsigned char>& image, int filter_size) {
-    if (filter_size % 2 == 0) {
-        throw std::invalid_argument("Filter size must be odd");
+    if (filter_size % 2 == 0 || filter_size < 0 ) {
+        throw std::invalid_argument("Filter size must be odd and positive.");
     }
 
     cimg_library::CImg<unsigned char> filteredImage = image; // Temporary image for storing the result
@@ -81,6 +81,9 @@ void FilterOperations::maxFilter(cimg_library::CImg<unsigned char>& image, int f
 }
 
 void FilterOperations::medianFilter(cimg_library::CImg<unsigned char> &image, int filter_size) {
+    if (filter_size % 2 == 0 || filter_size < 0 ) {
+        throw std::invalid_argument("Filter size must be odd and positive.");
+    }
     int width = image.width();
     int height = image.height();
     int half_size = filter_size / 2;
@@ -109,3 +112,39 @@ void FilterOperations::medianFilter(cimg_library::CImg<unsigned char> &image, in
         }
     }
 }
+bool isPowerOfTwo(int n)
+{
+    if (n == 0)
+        return 0;
+    while (n != 1) {
+        if (n % 2 != 0)
+            return 0;
+        n = n / 2;
+    }
+    return 1;
+}
+
+void FilterOperations::rosenfeldOperator(cimg_library::CImg<unsigned char>& image, int power) {
+     if(isPowerOfTwo(power) == false) {
+        throw std::invalid_argument("Filter size must be a power of two.");
+     }
+    int width = image.width();
+    cimg_library::CImg<unsigned char> filteredImage = image;
+
+    cimg_forXYC(image,x,y,c) {
+        int leftP = std::min(x,power); //caps the value if there would be no neighbouring pixels on the left side
+        int rightP = std::min(width - x - 1, power); //caps the value if there would be no neighbouring pixels on right side
+        float sum = 0;
+
+        for (int i = 1; i <= leftP; i++) {
+            sum -= image(x - i,y,c);
+        }
+        for (int j = 0; j < rightP; j++) {
+            sum += image(x + j,y,c);
+        }
+        filteredImage(x,y,c) = static_cast<int>(std::clamp(sum / power,0.00f,255.00f));
+
+    }
+    image = filteredImage;
+}
+

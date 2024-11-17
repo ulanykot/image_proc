@@ -9,14 +9,14 @@
 
 class ImageCharacteristics {
 public:
-    static double mean(cimg_library::CImg<unsigned char> image);
-    static double variance(cimg_library::CImg<unsigned char> image);
-    static double standardDeviation(cimg_library::CImg<unsigned char> image);
-    static double variationCoefficient(cimg_library::CImg<unsigned char> image);
-    static double asymmetryCoefficient(cimg_library::CImg<unsigned char> image);
-    static double flatteningCoefficient(cimg_library::CImg<unsigned char> image);
-    static double variationCoefficient2(cimg_library::CImg<unsigned char> image);
-    static double informationSourceEntropy(cimg_library::CImg<unsigned char> image);
+    static double meanFunction(cimg_library::CImg<unsigned char> &image);
+    static double variance(cimg_library::CImg<unsigned char> &image);
+    static double standardDeviation(cimg_library::CImg<unsigned char> &image);
+    static double variationCoefficient(cimg_library::CImg<unsigned char> &image);
+    static double asymmetryCoefficient(cimg_library::CImg<unsigned char> &image);
+    static double flatteningCoefficient(cimg_library::CImg<unsigned char> &image);
+    static double variationCoefficient2(cimg_library::CImg<unsigned char> &image);
+    static double informationSourceEntropy(cimg_library::CImg<unsigned char> &image);
 };
 
 

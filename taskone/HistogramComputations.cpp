@@ -28,7 +28,7 @@ std::vector<int> HistogramComputations::calcSumHistogram(std::vector<int> &histo
 
 cimg_library::CImg<unsigned char> HistogramComputations::drawHistogram(cimg_library::CImg<unsigned char>& image, int channel) {
     std::vector<int> histogram = calcHistogram(image, channel);
-    int max_count = *std::max_element(histogram.begin(), histogram.end());
+    int max_count = *std::ranges::max_element(histogram);
 
     cimg_library::CImg<unsigned char> histogram_image(256, 256);
     cimg_forXY(histogram_image,x,y) {
@@ -75,3 +75,4 @@ void HistogramComputations::equalizedHistogramPower(
     std::vector<int> powerDensityFunction = calcPowerDensityFunction(cumulativeHistogram,numberOfPixels, gmin, gmax);
     applyPowerDensityFunction(image,powerDensityFunction);
 }
+

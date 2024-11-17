@@ -35,7 +35,8 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
     int index = 3; // Starting from argv[3]
     while (index < argc) {
         std::string command = argv[index];
-        if (command == "--brightness" || command == "--contrast" || command == "--shrink" || command == "--enlarge" || command == "--min" || command == "--max" || command == "--median"|| command == "--histogram" || command == "--hpower") {
+        if (command == "--brightness" || command == "--contrast" || command == "--shrink" || command == "--enlarge" || command == "--min"
+            || command == "--max" || command == "--median"|| command == "--histogram" || command == "--hpower" || command == "--orosenfeld") {
             if (index + 1 >= argc) {
                 std::cout << "Error: Missing parameter for " << command << " adjustment." << std::endl;
                 return;
@@ -56,6 +57,9 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
             } else if (command == "--median") {
                 FilterOperations::medianFilter(image, atoi(parameter.c_str()));
             }
+            else if (command == "--orosenfeld") {
+                FilterOperations::rosenfeldOperator(image, atoi(parameter.c_str()));
+            }
             else if (command == "--hpower") {
                 if (index + 1 >= argc) {
                     std::cout << "Error: --hpower requires parameters gmin and gmax)." << std::endl;
@@ -66,8 +70,8 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
 
                 // Apply histogram equalization with power density function
                 HistogramComputations::equalizedHistogramPower(image, gmin, gmax);
-                // cimg_library::CImg<unsigned char> newImage = HistogramComputations::drawHistogram(image,0);
-                // newImage.save(outputImage.c_str());
+                cimg_library::CImg<unsigned char> newImage = HistogramComputations::drawHistogram(image,0);
+                newImage.save("C:\\imageproc\\taskone\\output_images\\report_2\\histogrampower.bmp");
                 std::cout << "Applied histogram equalization with power density function." << std::endl;
                 //return;
             }
