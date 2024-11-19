@@ -12,6 +12,7 @@
 #include "CImg.h"
 #include "FilterOperations.h"
 #include "HistogramComputations.h"
+#include "ImageCharacteristics.h"
 #include "SimilarityMeasures.h"
 #include "SpatialOperations.h"
 
@@ -98,7 +99,10 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
         else if (command=="--help") {
             help();
             return;
-        } else if (command == "--mse" || command == "--pmse" || command == "--snr" || command == "--psnr" || command == "--md") {
+        } else if (command == "--mse" || command == "--pmse" || command == "--snr" || command == "--psnr" || command == "--md"
+            //task2
+            || command == "--cmean" || command == "--cvariance" || command == "--cstdev" || command == "--cvarcoi"
+            || command =="--casyco" || command == "--cfsyco" || command == "--cvarcoii" || command == "--centropy") {
             if (!comparisonImageLoaded) {
                 outImage.load(outputImage.c_str());
                 comparisonImageLoaded = true;
@@ -114,6 +118,31 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
             } else if (command == "--md") {
                 std::cout << "Max difference: " << SimilarityMeasures::maximumDifference(image, outImage) << std::endl;
             }
+            else if (command == "--cmean") {
+                std::cout<< "Mean: " << ImageCharacteristics::meanFunction(image) << std::endl;
+            }
+            else if (command == "--cvariance") {
+                std::cout<< "Variance: " << ImageCharacteristics::variance(image) << std::endl;
+            }
+            else if (command == "--cstdev") {
+                std::cout<< "Standard deviation: " << ImageCharacteristics::standardDeviation(image) << std::endl;
+            }
+            else if(command == "--cvarcoi") {
+                std::cout<<"Variation coefficient I: " << ImageCharacteristics::variationCoefficient(image) << std::endl;
+            }
+            else if (command == "--cfsyco") {
+                std::cout<<"Flattening coeffcient: " << ImageCharacteristics::flatteningCoefficient(image) << std::endl;
+            }
+            else if (command == "--casyco") {
+                std::cout<<"Asymmetry coeffcient: " << ImageCharacteristics::asymmetryCoefficient(image) << std::endl;
+            }
+            else if (command == "--cvarcoii") {
+                std::cout<<"Variation coeffcient II: " << ImageCharacteristics::variationCoefficient2(image) << std::endl;
+            }
+            else if (command == "--centropy)") {
+                std::cout<<"Information source entropy: " << ImageCharacteristics::informationSourceEntropy(image) << std::endl;
+            }
+
         } else {
             std::cout << "Unknown command: " << command << std::endl;
         }
@@ -141,8 +170,12 @@ void CommandLineInterface::help() {
     std::cout << "--max <filter_size>       - Applies a maximum filter." << std::endl;
     std::cout << "--median <filter_size>    - Applies a median filter." << std::endl;
     std::cout << "--mse, --pmse, --snr, --psnr, --md - Multiple similarity commands can be used together to compare images." << std::endl;
-    std::cout<<"--sedgesharp <value>        - Applies a edge sharpening mask. The available values are 1, 2, 3. The matrices look as follows:" << std::endl;
+    std::cout<< "--cmean --cvariance --cstdev --cvarcoi --casyco --cfsyco --cvarcoii --centropy     - Multiple image characteristic parameters that can be used together to display values." << std::endl;
+    std::cout<<"--sedgesharp <value>        - Applies a edge sharpening mask linear image filtration algorithm. The available values are 1, 2, 3. The matrices look as follows:" << std::endl;
     printMatrix(SpatialOperations::h1, SpatialOperations::h2, SpatialOperations::h3);
+    std::cout<<"--hpower                    - Applies a power density function to the histogram. Gives two outputs: an changed image and an image histogram." <<std::endl;
+    std::cout<<"--orosenfeld                - Applies a rosenfeld operator non-linear spatial filtration algorithm."<<std::endl;
+
 }
 
 void CommandLineInterface::printMatrix(int h1[3][3], int h2[3][3], int h3[3][3]) {

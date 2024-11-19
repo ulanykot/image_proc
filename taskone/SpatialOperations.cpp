@@ -53,7 +53,7 @@ void SpatialOperations::convolve(cimg_library::CImg<unsigned char>& image, int m
 }
 
 void SpatialOperations::rosenfeldOperator(cimg_library::CImg<unsigned char>& image, int power) {
-     if(isPowerOfTwo(power) == false) {
+     if(isPowerOfTwo(power) == false || power < 0) {
         throw std::invalid_argument("Filter size must be a power of two.");
      }
     int width = image.width();
