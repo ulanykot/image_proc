@@ -88,11 +88,16 @@ double ImageCharacteristics::informationSourceEntropy(cimg_library::CImg<unsigne
    double numberOfPixels = image.height() * image.width();
    double sum = 0;
    double informationSourceEntrop = 0;
+
    std::vector<int> histogram = HistogramComputations::calcHistogram(image,0);
    for (int i = 0; i < histogram.size(); i++) {
-      sum += histogram[i]*log2(histogram[i]/numberOfPixels);
+      double count = histogram[i];
+      if (count > 0) {
+         double probability = count / numberOfPixels;
+         sum += probability * log2(probability);
+      }
    }
-   informationSourceEntrop = -1 * (sum/numberOfPixels);
-   return informationSourceEntrop;
+   double informationSourceEntropy = -sum;
+   return informationSourceEntropy;
 }
 

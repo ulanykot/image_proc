@@ -5,6 +5,7 @@
 #include "SpatialOperations.h"
 
 #include <stdexcept>
+#include <vector>
 
 bool isPowerOfTwo(int n)
 {
@@ -77,10 +78,9 @@ void SpatialOperations::rosenfeldOperator(cimg_library::CImg<unsigned char>& ima
 }
 
 void SpatialOperations::edgeSharpening(cimg_library::CImg<unsigned char> &image, int mask) {
-    //TODO w którejś z nich zamień na swoja implementacje optimizedEdgeSharpening(), zamiast po prostu convolve
     //values 1 2 3 are used in the command line for choosing a mask
     if(mask == 1) {
-        convolve(image,h1);
+        optimizedEdgeSharpening(image);
     }
     else if(mask == 2) {
         convolve(image,h2);
@@ -89,6 +89,32 @@ void SpatialOperations::edgeSharpening(cimg_library::CImg<unsigned char> &image,
         convolve(image,h3);
     }
 }
-//TODO zmien sobie te funkcje oraz jej signature jak chcesz, nie musi byc int mask
-void SpatialOperations::optimizedEdgeSharpening(cimg_library::CImg<unsigned char> &image, int mask) {
+
+void SpatialOperations::optimizedEdgeSharpening(cimg_library::CImg<unsigned char> &image) {
+    cimg_library::CImg<unsigned char> filteredImage = image;
+    int maskSize = 3;
+    int halfSize = 1;
+
+    for (int x = halfSize; x < image.width() - halfSize; ++x) {
+        for (int y = halfSize; y < image.height() - halfSize; ++y) {
+            for (int c = 0; c < image.spectrum(); ++c) {
+                
+                int sum = 0;
+                sum += image(x - 1, y - 1, c) * h1[0][0];  // maskN[0] * h1[0][0] (0)
+                sum += image(x - 1, y, c) * h1[0][1];      // maskN[1] * h1[0][1] (-1)
+                sum += image(x - 1, y + 1, c) * h1[0][2];  // maskN[2] * h1[0][2] (0)
+
+                sum += image(x, y - 1, c) * h1[1][0];      // maskN[3] * h1[1][0] (-1)
+                sum += image(x, y, c) * h1[1][1];          // maskN[4] * h1[1][1] (5)
+                sum += image(x, y + 1, c) * h1[1][2];      // maskN[5] * h1[1][2] (-1)
+
+                sum += image(x + 1, y - 1, c) * h1[2][0];  // maskN[6] * h1[2][0] (0)
+                sum += image(x + 1, y, c) * h1[2][1];      // maskN[7] * h1[2][1] (-1)
+                sum += image(x + 1, y + 1, c) * h1[2][2];  // maskN[8] * h1[2][2] (0)
+                
+                filteredImage(x, y, c) = std::clamp(sum, 0, 255);
+            }
+        }
+    }
+    image = filteredImage;
 }
