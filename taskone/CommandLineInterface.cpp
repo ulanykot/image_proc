@@ -7,6 +7,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <chrono>
 
 #include "BasicOperations.h"
 #include "CImg.h"
@@ -95,6 +96,22 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
             BasicOperations::doVerticalFlip(image);
         } else if (command == "--dflip") {
             BasicOperations::doDiagonalFlip(image);
+        }
+        else if (command == "--time") {
+            // Measure time for non-optimized version
+            int a[3][3] = { {0, -1, 0}, {-1, 5, -1}, {0, -1, 0} };
+            auto start = std::chrono::high_resolution_clock::now();
+            SpatialOperations::convolve(image, a); // Call the function
+            auto end = std::chrono::high_resolution_clock::now();
+            auto duration = duration_cast<std::chrono::milliseconds>(end - start).count();
+            std::cout << "Convolve function time: " << duration << " ms" << std::endl;
+
+            // Measure time for optimized version
+            auto startOpt = std::chrono::high_resolution_clock::now();
+            SpatialOperations::optimizedEdgeSharpening(image); // Call the function
+            auto endOpt = std::chrono::high_resolution_clock::now();
+            auto durationOpt = duration_cast<std::chrono::milliseconds>(endOpt - startOpt).count();
+            std::cout << "Optimized function time: " << durationOpt << " ms" << std::endl;
         }
         else if (command=="--help") {
             help();
