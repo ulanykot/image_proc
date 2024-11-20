@@ -54,7 +54,7 @@ double ImageCharacteristics::asymmetryCoefficient(cimg_library::CImg<unsigned ch
    for (int i = 0; i < histogram.size(); i++) {
       sum += pow(i - mean, 3.0) * (histogram[i]);
    }
-   asymmetryCoefficient = sum/numberOfPixels*pow(standardDev, 1.0/3.0);
+   asymmetryCoefficient = sum/numberOfPixels * (1/pow(standardDev, 3.0));
    return asymmetryCoefficient;
 }
 
@@ -87,12 +87,12 @@ double ImageCharacteristics::variationCoefficient2(cimg_library::CImg<unsigned c
 double ImageCharacteristics::informationSourceEntropy(cimg_library::CImg<unsigned char> &image) {
    double numberOfPixels = image.height() * image.width();
    double sum = 0;
-   double informationSourceEntropy = 0;
+   double informationSourceEntrop = 0;
    std::vector<int> histogram = HistogramComputations::calcHistogram(image,0);
    for (int i = 0; i < histogram.size(); i++) {
       sum += histogram[i]*log2(histogram[i]/numberOfPixels);
    }
-   informationSourceEntropy = -1 * (sum/numberOfPixels);
-   return informationSourceEntropy;
+   informationSourceEntrop = -1 * (sum/numberOfPixels);
+   return informationSourceEntrop;
 }
 

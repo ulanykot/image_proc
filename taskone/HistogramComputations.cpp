@@ -69,7 +69,7 @@ void HistogramComputations::applyPowerDensityFunction(cimg_library::CImg<unsigne
 
 void HistogramComputations::equalizedHistogramPower(
     cimg_library::CImg<unsigned char> &image, int gmin, int gmax) {
-    std::vector<int> histogram = calcHistogram(image, 0);
+    std::vector<int> histogram = calcHistogram(image, 2);
     std::vector<int> cumulativeHistogram = calcSumHistogram(histogram);
     int numberOfPixels = image.width() * image.height();
     std::vector<int> powerDensityFunction = calcPowerDensityFunction(cumulativeHistogram,numberOfPixels, gmin, gmax);
