@@ -139,7 +139,7 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
             else if (command == "--cvarcoii") {
                 std::cout<<"Variation coeffcient II: " << ImageCharacteristics::variationCoefficient2(image) << std::endl;
             }
-            else if (command == "--centropy)") {
+            else if (command == "--centropy") {
                 std::cout<<"Information source entropy: " << ImageCharacteristics::informationSourceEntropy(image) << std::endl;
             }
 

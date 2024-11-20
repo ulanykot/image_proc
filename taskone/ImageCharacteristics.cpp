@@ -87,12 +87,17 @@ double ImageCharacteristics::variationCoefficient2(cimg_library::CImg<unsigned c
 double ImageCharacteristics::informationSourceEntropy(cimg_library::CImg<unsigned char> &image) {
    double numberOfPixels = image.height() * image.width();
    double sum = 0;
-   double informationSourceEntropy = 0;
+
    std::vector<int> histogram = HistogramComputations::calcHistogram(image,0);
    for (int i = 0; i < histogram.size(); i++) {
-      sum += histogram[i]*log2(histogram[i]/numberOfPixels);
+      double count = histogram[i];
+      if (count > 0) {  
+         double probability = count / numberOfPixels;
+         sum += probability * log2(probability);  
+      }
    }
-   informationSourceEntropy = -1 * (sum/numberOfPixels);
+
+   double informationSourceEntropy = -sum;  
    return informationSourceEntropy;
 }
 

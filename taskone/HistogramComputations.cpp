@@ -32,12 +32,12 @@ cimg_library::CImg<unsigned char> HistogramComputations::drawHistogram(cimg_libr
 
     cimg_library::CImg<unsigned char> histogram_image(256, 256);
     cimg_forXY(histogram_image,x,y) {
-        histogram_image(x,y) = 0;
+        histogram_image(x,y) = 255;
     }
     for (int x = 0; x < histogram_image.width(); x++) {
         float barHeight = (histogram[x] / static_cast<float>(max_count)) * histogram_image.height();
         for (int y = histogram_image.height() - 1; y >= histogram_image.height() - barHeight; y--) {
-            histogram_image(x,y,0,0) = 255;
+            histogram_image(x, y, 0, 0) = 0; 
         }
     }
     return histogram_image;
@@ -69,7 +69,7 @@ void HistogramComputations::applyPowerDensityFunction(cimg_library::CImg<unsigne
 
 void HistogramComputations::equalizedHistogramPower(
     cimg_library::CImg<unsigned char> &image, int gmin, int gmax) {
-    std::vector<int> histogram = calcHistogram(image, 0);
+    std::vector<int> histogram = calcHistogram(image, 2);
     std::vector<int> cumulativeHistogram = calcSumHistogram(histogram);
     int numberOfPixels = image.width() * image.height();
     std::vector<int> powerDensityFunction = calcPowerDensityFunction(cumulativeHistogram,numberOfPixels, gmin, gmax);

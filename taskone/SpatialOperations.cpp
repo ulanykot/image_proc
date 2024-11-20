@@ -5,6 +5,7 @@
 #include "SpatialOperations.h"
 
 #include <stdexcept>
+#include <vector>
 
 bool isPowerOfTwo(int n)
 {
@@ -77,10 +78,9 @@ void SpatialOperations::rosenfeldOperator(cimg_library::CImg<unsigned char>& ima
 }
 
 void SpatialOperations::edgeSharpening(cimg_library::CImg<unsigned char> &image, int mask) {
-    //TODO w którejś z nich zamień na swoja implementacje optimizedEdgeSharpening(), zamiast po prostu convolve
     //values 1 2 3 are used in the command line for choosing a mask
     if(mask == 1) {
-        convolve(image,h1);
+        optimizedEdgeSharpening(image);
     }
     else if(mask == 2) {
         convolve(image,h2);
@@ -89,6 +89,44 @@ void SpatialOperations::edgeSharpening(cimg_library::CImg<unsigned char> &image,
         convolve(image,h3);
     }
 }
-//TODO zmien sobie te funkcje oraz jej signature jak chcesz, nie musi byc int mask
-void SpatialOperations::optimizedEdgeSharpening(cimg_library::CImg<unsigned char> &image, int mask) {
+
+void SpatialOperations::optimizedEdgeSharpening(cimg_library::CImg<unsigned char> &image) {
+    static const int h1[3][3] = {
+        { 0, -1,  0 },
+        {-1,  5, -1 },
+        { 0, -1,  0 }
+    };
+
+    const int width = image.width();
+    const int height = image.height();
+    const int spectrum = image.spectrum();
+
+    cimg_library::CImg<unsigned char> filteredImage(width, height, 1, spectrum, 0);
+    std::vector<int> rowBuffer[3] = {std::vector<int>(width * spectrum, 0),
+                                     std::vector<int>(width * spectrum, 0),
+                                     std::vector<int>(width * spectrum, 0)};
+
+    for (int y = 1; y < height - 1; ++y) {
+        for (int i = -1; i <= 1; ++i) {
+            int srcRow = y + i;
+            for (int x = 1; x < width - 1; ++x) {
+                for (int c = 0; c < spectrum; ++c) {
+                    rowBuffer[i + 1][x * spectrum + c] = image(x, srcRow, c);
+                }
+            }
+        }
+
+        for (int x = 1; x < width - 1; ++x) {
+            for (int c = 0; c < spectrum; ++c) {
+                int sum = 0;
+                for (int i = 0; i < 3; ++i) {
+                    for (int j = 0; j < 3; ++j) {
+                        sum += rowBuffer[i][(x + j - 1) * spectrum + c] * h1[i][j];
+                    }
+                }
+                filteredImage(x, y, c) = std::clamp(sum, 0, 255);
+            }
+        }
+    }
+    image = filteredImage;
 }

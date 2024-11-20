@@ -18,7 +18,7 @@ public:
     static void rosenfeldOperator(cimg_library::CImg<unsigned char> &image, int power);
     static void edgeSharpening(cimg_library::CImg<unsigned char> &image, int mask);
     //TODO
-    static void optimizedEdgeSharpening(cimg_library::CImg<unsigned char> &image, int mask);
+    static void optimizedEdgeSharpening(cimg_library::CImg<unsigned char> &image);
 
 };
 
