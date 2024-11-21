@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <chrono>
+#include <fstream>
 
 #include "BasicOperations.h"
 #include "CImg.h"
@@ -17,7 +18,20 @@
 #include "SimilarityMeasures.h"
 #include "SpatialOperations.h"
 
+bool isValidImageFile(const std::string& filePath) {
+    std::ifstream file(filePath);
+    return file.good();
+}
+
 void CommandLineInterface::parseCommand(int argc, char *argv[]) {
+    for (int i = 1; i < argc; ++i) {
+        std::string filePath = argv[i];
+        if (!isValidImageFile(filePath)) {
+            std::cerr << "Error: File \"" << filePath << "\" does not exist." << std::endl;
+            return;
+        }
+    }
+
     if (argc < 3) {
         help();
         return;
@@ -34,6 +48,7 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
     cimg_library::CImg<unsigned char> image(inputImage.c_str());
     cimg_library::CImg<unsigned char> outImage;
     bool comparisonImageLoaded = false;
+
 
     int index = 3; // Starting from argv[3]
     while (index < argc) {
