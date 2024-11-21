@@ -24,12 +24,9 @@ bool isValidImageFile(const std::string& filePath) {
 }
 
 void CommandLineInterface::parseCommand(int argc, char *argv[]) {
-    for (int i = 1; i < argc; ++i) {
-        std::string filePath = argv[i];
-        if (!isValidImageFile(filePath)) {
-            std::cerr << "Error: File \"" << filePath << "\" does not exist." << std::endl;
-            return;
-        }
+    if (!isValidImageFile(argv[1])) {
+        std::cerr << "Error: File \"" << argv[1] << "\" does not exist." << std::endl;
+        return;
     }
 
     if (argc < 3) {
@@ -92,8 +89,15 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
                 // Apply histogram equalization with power density function
                 HistogramComputations::equalizedHistogramPower(image, gmin, gmax);
                 cimg_library::CImg<unsigned char> newImage = HistogramComputations::drawHistogram(image,0);
-                newImage.save("C:\\imageproc\\taskone\\output_images\\report_2\\histogrampower.bmp");
-                std::cout << "Applied histogram equalization with power density function." << std::endl;
+                int pos = outputImage.find_last_of(".bmp");
+                std::string histogramPath;
+                if (pos != std::string::npos) {
+                    histogramPath = outputImage.substr(0, pos - 3) + "histogram.bmp";
+                } else {
+                    histogramPath = outputImage + "histogram.bmp";
+                }
+                newImage.save(histogramPath.c_str());
+                std::cout << "Histogram of changed image with power density function saved as: '" + histogramPath + "'" << std::endl;
                 //return;
             }
             else if(command == "--histogram") {
@@ -135,9 +139,15 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
             //task2
             || command == "--cmean" || command == "--cvariance" || command == "--cstdev" || command == "--cvarcoi"
             || command =="--casyco" || command == "--cfsyco" || command == "--cvarcoii" || command == "--centropy") {
-            if (!comparisonImageLoaded) {
-                outImage.load(outputImage.c_str());
-                comparisonImageLoaded = true;
+            if (isValidImageFile(argv[2])) {
+                if (!comparisonImageLoaded) {
+                    outImage.load(outputImage.c_str());
+                    comparisonImageLoaded = true;
+                }
+            }
+            else {
+                std::cerr << "Error: File \"" << argv[2] << "\" does not exist." << std::endl;
+                return;
             }
             if (command == "--mse") {
                 std::cout << "Mean square error: " << SimilarityMeasures::meanSquare(image, outImage) << std::endl;
