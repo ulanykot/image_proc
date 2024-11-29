@@ -19,5 +19,7 @@ add_executable(taskone main.cpp
         ImageCharacteristics.cpp
         ImageCharacteristics.h
         SpatialOperations.cpp
-        SpatialOperations.h)
+        SpatialOperations.h
+        MorphologicalBasic.cpp
+        MorphologicalBasic.h)
 include_directories(cmake-build-debug/img/)

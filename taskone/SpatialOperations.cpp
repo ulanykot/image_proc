@@ -20,7 +20,7 @@ bool isPowerOfTwo(int n)
 }
 
 int SpatialOperations::h1[3][3] = { {0, -1, 0}, {-1, 5, -1}, {0, -1, 0} };
-int SpatialOperations::h2[3][3] = { {-1, -1, -1}, {-1, 9, -1}, {-1, -1, -1} };
+int SpatialOperations::h2[3][3] = { {-1, -1, -1}, {-1, 8, -1}, {-1, -1, -1} };
 int SpatialOperations::h3[3][3] = { {1, -2, 1}, {-2, 5, -2}, {1, -2, 1} };
 
 
@@ -100,17 +100,17 @@ void SpatialOperations::optimizedEdgeSharpening(cimg_library::CImg<unsigned char
             for (int c = 0; c < image.spectrum(); ++c) {
                 
                 int sum = 0;
-                sum += image(x - 1, y - 1, c) * h1[0][0];  // maskN[0] * h1[0][0] (0)
-                sum += image(x - 1, y, c) * h1[0][1];      // maskN[1] * h1[0][1] (-1)
-                sum += image(x - 1, y + 1, c) * h1[0][2];  // maskN[2] * h1[0][2] (0)
+                //sum += image(x - 1, y - 1, c) * h1[0][0];  // maskN[0] * h1[0][0] (0)
+                sum -= image(x - 1, y, c); //* h1[0][1];      // maskN[1] * h1[0][1] (-1)
+                //sum += image(x - 1, y + 1, c) * h1[0][2];  // maskN[2] * h1[0][2] (0)
 
-                sum += image(x, y - 1, c) * h1[1][0];      // maskN[3] * h1[1][0] (-1)
+                sum -= image(x, y - 1, c);// * h1[1][0];      // maskN[3] * h1[1][0] (-1)
                 sum += image(x, y, c) * h1[1][1];          // maskN[4] * h1[1][1] (5)
-                sum += image(x, y + 1, c) * h1[1][2];      // maskN[5] * h1[1][2] (-1)
+                sum -= image(x, y + 1, c); //* h1[1][2];      // maskN[5] * h1[1][2] (-1)
 
-                sum += image(x + 1, y - 1, c) * h1[2][0];  // maskN[6] * h1[2][0] (0)
-                sum += image(x + 1, y, c) * h1[2][1];      // maskN[7] * h1[2][1] (-1)
-                sum += image(x + 1, y + 1, c) * h1[2][2];  // maskN[8] * h1[2][2] (0)
+                //sum += image(x + 1, y - 1, c) * h1[2][0];  // maskN[6] * h1[2][0] (0)
+                sum -= image(x + 1, y, c); // * h1[2][1];      // maskN[7] * h1[2][1] (-1)
+                //sum += image(x + 1, y + 1, c) * h1[2][2];  // maskN[8] * h1[2][2] (0)
                 
                 filteredImage(x, y, c) = std::clamp(sum, 0, 255);
             }

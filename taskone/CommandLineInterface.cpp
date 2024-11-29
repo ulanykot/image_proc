@@ -15,6 +15,7 @@
 #include "FilterOperations.h"
 #include "HistogramComputations.h"
 #include "ImageCharacteristics.h"
+#include "MorphologicalBasic.h"
 #include "SimilarityMeasures.h"
 #include "SpatialOperations.h"
 
@@ -115,6 +116,18 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
             BasicOperations::doVerticalFlip(image);
         } else if (command == "--dflip") {
             BasicOperations::doDiagonalFlip(image);
+        }
+        else if(command == "--dilation") {
+            MorphologicalBasic::dilation(image,MorphologicalBasic::eight);
+        }
+        else if(command == "--erosion") {
+            MorphologicalBasic::erosion(image,MorphologicalBasic::one);
+        }
+        else if(command == "--opening") {
+            MorphologicalBasic::opening(image,MorphologicalBasic::one);
+        }
+        else if(command == "--closing") {
+            MorphologicalBasic::closing(image,MorphologicalBasic::one);
         }
         else if (command == "--time") {
             // Measure time for non-optimized version

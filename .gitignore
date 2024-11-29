@@ -39,3 +39,5 @@ taskone/cmake-build-debug/.cmake/api/v1/reply/index-2024-10-08T11-02-06-0274.jso
 taskone/output_images/report_images/negative.bmp
 /taskone/output_images
 /img
+/taskone/cmake-build-release
+taskone/image.bmp
