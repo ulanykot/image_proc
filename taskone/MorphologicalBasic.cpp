@@ -7,9 +7,16 @@
 #include <iostream>
 #include <ostream>
 
-std::array<std::array<int, 3>, 3> MorphologicalBasic::one = {{{0,0,0}, {0,1,0}, {0,1,0}}};
-std::array<std::array<int, 3>, 3> MorphologicalBasic::three = {{{1,1,1}, {1,1,1}, {1,1,1}}};
+std::array<std::array<int, 3>, 3> MorphologicalBasic::one = {{{0,0,0}, {0,1,0}, {0,1,0}}}; //certainly good
+std::array<std::array<int, 3>, 3> MorphologicalBasic::two = {{{0,0,0}, {0,1,1}, {0,0,0}}};
+std::array<std::array<int, 3>, 3> MorphologicalBasic::three = {{{1,1,1}, {1,1,1}, {1,1,1}}}; //good
+std::array<std::array<int, 3>, 3> MorphologicalBasic::four = {{{0,1,0}, {1,1,1}, {0,1,0}}};
+std::array<std::array<int, 3>, 3> MorphologicalBasic::five = {{{0,0,0}, {0,1,1}, {0,1,0}}};
+std::array<std::array<int, 3>, 3> MorphologicalBasic::six = {{{0,0,0}, {0,0,1}, {0,1,0}}};
+std::array<std::array<int, 3>, 3> MorphologicalBasic::seven = {{{0,1,0}, {0,1,0}, {0,1,0}}};
 std::array<std::array<int, 3>, 3> MorphologicalBasic::eight = {{{0,1,0}, {0,0,0}, {0,1,0}}};
+std::array<std::array<int, 3>, 3> MorphologicalBasic::nine = {{{0,1,1}, {0,1,0}, {0,0,0}}};
+std::array<std::array<int, 3>, 3> MorphologicalBasic::ten = {{{0,0,0}, {1,1,0}, {1,0,0}}};
 
 void MorphologicalBasic::dilation(cimg_library::CImg<unsigned char> &image, const std::array<std::array<int,3>,3> &se) {
     cimg_library::CImg<unsigned char> filteredImage = image;
@@ -75,3 +82,42 @@ void MorphologicalBasic::closing(cimg_library::CImg<unsigned char> &image,
     image = filteredImage;
 }
 
+static std::array<std::array<int, 3>, 3> assignNumberToStructuingElement(int se) {
+    switch (se) {
+        case 1:
+            return MorphologicalBasic::one;
+        case 2:
+            return MorphologicalBasic::two;
+        case 3:
+            return MorphologicalBasic::three;
+        case 4:
+            return MorphologicalBasic::four;
+        case 5:
+            return MorphologicalBasic::five;
+        case 6:
+            return MorphologicalBasic::six;
+        case 7:
+            return MorphologicalBasic::seven;
+        case 8:
+            return MorphologicalBasic::eight;
+        case 9:
+            return MorphologicalBasic::nine;
+        case 10:
+            return MorphologicalBasic::ten;
+    }
+    return MorphologicalBasic::one;
+}
+
+void MorphologicalBasic::doOpening(cimg_library::CImg<unsigned char> &image, int se) {
+    opening(image,assignNumberToStructuingElement(se));
+
+}
+void MorphologicalBasic::doClosing(cimg_library::CImg<unsigned char> &image, int se) {
+    closing(image,assignNumberToStructuingElement(se));
+}
+void MorphologicalBasic::doDilation(cimg_library::CImg<unsigned char> &image, int se) {
+    dilation(image,assignNumberToStructuingElement(se));
+}
+void MorphologicalBasic::doErosion(cimg_library::CImg<unsigned char> &image, int se) {
+    erosion(image,assignNumberToStructuingElement(se));
+}

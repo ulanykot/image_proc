@@ -28,6 +28,11 @@ public:
     static void erosion(cimg_library::CImg<unsigned char>& image, const std::array<std::array<int,3>,3> &se);
     static void opening(cimg_library::CImg<unsigned char>& image, const std::array<std::array<int,3>,3> &se);
     static void closing(cimg_library::CImg<unsigned char>& image, const std::array<std::array<int,3>,3> &se);
+
+    static void doOpening(cimg_library::CImg<unsigned char> &image, int se);
+    static void doClosing(cimg_library::CImg<unsigned char> &image, int se);
+    static void doDilation(cimg_library::CImg<unsigned char> &image, int se);
+    static void doErosion(cimg_library::CImg<unsigned char> &image, int se);
 };
 
 

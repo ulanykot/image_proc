@@ -52,7 +52,8 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
     while (index < argc) {
         std::string command = argv[index];
         if (command == "--brightness" || command == "--contrast" || command == "--shrink" || command == "--enlarge" || command == "--min"
-            || command == "--max" || command == "--median"|| command == "--histogram" || command == "--hpower" || command == "--orosenfeld" || command == "--sedgesharp") {
+            || command == "--max" || command == "--median"|| command == "--histogram" || command == "--hpower" || command == "--orosenfeld" || command == "--sedgesharp" ||
+            command =="--erosion" || command =="--closing" || command =="--opening" || command == "--dilation") {
             if (index + 1 >= argc) {
                 std::cout << "Error: Missing parameter for " << command << " adjustment." << std::endl;
                 return;
@@ -107,6 +108,18 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
                 std::cout<<"Histogram representation in the form of an image saved." <<std::endl;
                 return;
             }
+            else if(command == "--dilation") {
+                MorphologicalBasic::doDilation(image,atoi(parameter.c_str()));
+            }
+            else if(command == "--erosion") {
+                MorphologicalBasic::doErosion(image,atoi(parameter.c_str()));
+            }
+            else if(command == "--opening") {
+                MorphologicalBasic::doOpening(image,atoi(parameter.c_str()));
+            }
+            else if(command == "--closing") {
+                MorphologicalBasic::doClosing(image,atoi(parameter.c_str()));
+            }
 
         } else if (command == "--negative") {
             BasicOperations::doNegative(image);
@@ -116,18 +129,6 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
             BasicOperations::doVerticalFlip(image);
         } else if (command == "--dflip") {
             BasicOperations::doDiagonalFlip(image);
-        }
-        else if(command == "--dilation") {
-            MorphologicalBasic::dilation(image,MorphologicalBasic::eight);
-        }
-        else if(command == "--erosion") {
-            MorphologicalBasic::erosion(image,MorphologicalBasic::one);
-        }
-        else if(command == "--opening") {
-            MorphologicalBasic::opening(image,MorphologicalBasic::one);
-        }
-        else if(command == "--closing") {
-            MorphologicalBasic::closing(image,MorphologicalBasic::one);
         }
         else if (command == "--time") {
             // Measure time for non-optimized version
