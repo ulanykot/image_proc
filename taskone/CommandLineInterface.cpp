@@ -53,7 +53,7 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
         std::string command = argv[index];
         if (command == "--brightness" || command == "--contrast" || command == "--shrink" || command == "--enlarge" || command == "--min"
             || command == "--max" || command == "--median"|| command == "--histogram" || command == "--hpower" || command == "--orosenfeld" || command == "--sedgesharp" ||
-            command =="--erosion" || command =="--closing" || command =="--opening" || command == "--dilation") {
+            command =="--erosion" || command =="--closing" || command =="--opening" || command == "--dilation" || command == "--hmt") {
             if (index + 1 >= argc) {
                 std::cout << "Error: Missing parameter for " << command << " adjustment." << std::endl;
                 return;
@@ -119,6 +119,9 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
             }
             else if(command == "--closing") {
                 MorphologicalBasic::doClosing(image,atoi(parameter.c_str()));
+            }
+            else if(command =="--hmt") {
+                MorphologicalBasic::doHMT(image,atoi(parameter.c_str()));
             }
 
         } else if (command == "--negative") {
