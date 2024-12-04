@@ -121,7 +121,9 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
                 MorphologicalBasic::doClosing(image,atoi(parameter.c_str()));
             }
             else if(command =="--hmt") {
-                MorphologicalBasic::doHMT(image,atoi(parameter.c_str()));
+                cimg_library::CImg<unsigned char> newImage = MorphologicalBasic::doHMT(image,atoi(parameter.c_str()));
+                newImage.save(outputImage.c_str());
+                return;
             }
 
         } else if (command == "--negative") {
