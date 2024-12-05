@@ -37,61 +37,61 @@ std::array<std::array<int, 3>, 3> MorphologicalBasic::twelve_square_right_bottom
 #pragma endregion
 #pragma region helper functions
 
-static std::array<std::array<int, 3>, 3> assignNumberToStructuringElement(int se) {
+std::array<std::array<int, 3>, 3> MorphologicalBasic::assignNumberToStructuringElement(int se) {
     switch (se) {
         case 1:
-            return MorphologicalBasic::one;
+            return one;
         case 2:
-            return MorphologicalBasic::two;
+            return two;
         case 3:
-            return MorphologicalBasic::three;
+            return three;
         case 4:
-            return MorphologicalBasic::four;
+            return four;
         case 5:
-            return MorphologicalBasic::five;
+            return five;
         case 6:
-            return MorphologicalBasic::six;
+            return six;
         case 7:
-            return MorphologicalBasic::seven;
+            return seven;
         case 8:
-            return MorphologicalBasic::eight;
+            return eight;
         case 9:
-            return MorphologicalBasic::nine;
+            return nine;
         case 10:
-            return MorphologicalBasic::ten;
+            return ten;
         default:
-            return MorphologicalBasic::one;
+            return one;
     }
 }
 
-static std::array<std::array<int, 3>, 3> assignNumberToSEHMT(int se) {
+std::array<std::array<int, 3>, 3> MorphologicalBasic::assignNumberToSEHMT(int se) {
     switch (se) {
         case 1:
-            return MorphologicalBasic::eleven_left;
+            return eleven_left;
         case 2:
-            return MorphologicalBasic::eleven_top;
+            return eleven_top;
         case 3:
-            return MorphologicalBasic::eleven_right;
+            return eleven_right;
         case 4:
-            return MorphologicalBasic::eleven_bottom;
+            return eleven_bottom;
         case 5:
-            return MorphologicalBasic::twelve_three_bottom;
+            return twelve_three_bottom;
         case 6:
-            return MorphologicalBasic::twelve_square_left_bottom;
+            return twelve_square_left_bottom;
         case 7:
-            return MorphologicalBasic::twelve_three_left;
+            return twelve_three_left;
         case 8:
-            return MorphologicalBasic::twelve_square_left_top;
+            return twelve_square_left_top;
         case 9:
-            return MorphologicalBasic::twelve_three_top;
+            return twelve_three_top;
         case 10:
-            return MorphologicalBasic::twelve_square_right_top;
+            return twelve_square_right_top;
         case 11:
-            return MorphologicalBasic::twelve_three_right;
+            return twelve_three_right;
         case 12:
-            return MorphologicalBasic::twelve_square_right_bottom;
+            return twelve_square_right_bottom;
         default:
-            return MorphologicalBasic::one;
+            return one;
     }
 }
 
@@ -127,6 +127,10 @@ bool imagesAreEqual(const cimg_library::CImg<unsigned char> &image1, const cimg_
     return true;
 }
 
+bool MorphologicalBasic::isInRange(const cimg_library::CImg<unsigned char> &image, const int x, const int y) {
+    return x >= 0 && x < image.width() && y >= 0 && y < image.height();
+}
+
 #pragma endregion
 
 void MorphologicalBasic::dilation(cimg_library::CImg<unsigned char> &image, const std::array<std::array<int,3>,3> &se) {
@@ -142,7 +146,7 @@ void MorphologicalBasic::dilation(cimg_library::CImg<unsigned char> &image, cons
                                 int new_x = x + (i - 1); // se[1][1] is the middle value that is why -1 here and
                                 int new_y = y + (j - 1); // here -1 too
 
-                                if (new_x >= 0 && new_x < image.width() && new_y >= 0 && new_y < image.height()) {
+                                if (isInRange(filteredImage, new_x, new_y)) {
                                     filteredImage(new_x, new_y,0,c) = 255;
                                 }
                             }
@@ -167,7 +171,7 @@ void MorphologicalBasic::erosion(cimg_library::CImg<unsigned char> &image, const
                                 int new_x = x + (i - 1); // se[1][1] is the middle value that is why -1 here and
                                 int new_y = y + (j - 1); // here -1 too
 
-                                if (new_x < 0 && new_x >= image.width() && new_y < 0 && new_y >= image.height() || image(new_x,new_y) == 0) {
+                                if (isInRange(image,new_x,new_y) || image(new_x,new_y) == 0) {
                                     filteredImage(x, y,0,c) = 0;
                                 }
                             }
@@ -208,7 +212,7 @@ cimg_library::CImg<unsigned char> MorphologicalBasic::hitOrMiss(cimg_library::CI
                         int new_x = x + i - 1; // se[1][1] is the middle value that is why -1 here and
                         int new_y = y + j - 1; // here -1 too
 
-                        if (new_x >= 0 && new_x < image.width() && new_y >= 0 && new_y < image.height()) {
+                        if (isInRange(image,new_x,new_y)) {
                             if(se[i][j] == 1 && image(new_x,new_y) != 255) {
                                 stateHit = false;
                             }

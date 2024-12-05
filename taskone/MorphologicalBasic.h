@@ -39,6 +39,8 @@ public:
     static std::array<std::array<int, 3>, 3> twelve_square_right_bottom;
 #pragma endregion
 
+    static bool isInRange(const cimg_library::CImg<unsigned char> &image, int x, int y);
+
     static void dilation(cimg_library::CImg<unsigned char>& image, const std::array<std::array<int,3>,3> &se);
     static void erosion(cimg_library::CImg<unsigned char>& image, const std::array<std::array<int,3>,3> &se);
     static void opening(cimg_library::CImg<unsigned char>& image, const std::array<std::array<int,3>,3> &se);
@@ -51,6 +53,11 @@ public:
     static void doDilation(cimg_library::CImg<unsigned char> &image, int se);
     static void doErosion(cimg_library::CImg<unsigned char> &image, int se);
     static cimg_library::CImg<unsigned char> doHMT(cimg_library::CImg<unsigned char> &image, int se);
+
+
+    static std::array<std::array<int, 3>, 3> assignNumberToStructuringElement(int se);
+    static std::array<std::array<int, 3>, 3> assignNumberToSEHMT(int se);
+
 };
 
 

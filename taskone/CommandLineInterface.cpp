@@ -15,6 +15,7 @@
 #include "FilterOperations.h"
 #include "HistogramComputations.h"
 #include "ImageCharacteristics.h"
+#include "ImageSegmentation.h"
 #include "MorphologicalBasic.h"
 #include "SimilarityMeasures.h"
 #include "SpatialOperations.h"
@@ -23,6 +24,17 @@ bool isValidImageFile(const std::string& filePath) {
     std::ifstream file(filePath);
     return file.good();
 }
+
+void printSingleMatrix(const std::array<std::array<int, 3>, 3> &h1) {
+    for (int i = 0; i < 3; ++i) {
+        // Loop through rows
+        for (int j = 0; j < 3; ++j) {
+            std::cout << h1[i][j] << "\t";
+        }
+        std::cout << std::endl;
+    }
+}
+
 
 void CommandLineInterface::parseCommand(int argc, char *argv[]) {
     if (!isValidImageFile(argv[1])) {
@@ -125,6 +137,9 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
                 newImage.save(outputImage.c_str());
                 return;
             }
+            else if (command =="--rgrowing") {
+                ImageSegmentation::regionGrowing(image,atoi(parameter.c_str()),atoi(argv[4]),atoi(argv[5]));
+            }
 
         } else if (command == "--negative") {
             BasicOperations::doNegative(image);
@@ -134,6 +149,9 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
             BasicOperations::doVerticalFlip(image);
         } else if (command == "--dflip") {
             BasicOperations::doDiagonalFlip(image);
+        }
+        else if(command == "--thinning") {
+            MorphologicalBasic::thinning(image);
         }
         else if (command == "--time") {
             // Measure time for non-optimized version
@@ -217,26 +235,93 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
 }
 
 void CommandLineInterface::help() {
+    int param;
     std::cout << "Usage: application <input_image_file> <output_image_file> <command(s)> [param]" << std::endl;
-    std::cout << "Possible commands: " << std::endl;
-    std::cout << "--brightness <value>      - Adjusts the image's brightness." << std::endl;
-    std::cout << "--contrast <value>        - Adjusts the image's contrast." << std::endl;
-    std::cout << "--negative                - Inverts the colors of the image." << std::endl;
-    std::cout << "--hflip                   - Flips the image horizontally." << std::endl;
-    std::cout << "--vflip                   - Flips the image vertically." << std::endl;
-    std::cout << "--dflip                   - Diagonal flip of the image." << std::endl;
-    std::cout << "--shrink <factor>         - Shrinks the image." << std::endl;
-    std::cout << "--enlarge <factor>        - Enlarges the image." << std::endl;
-    std::cout << "--min <filter_size>       - Applies a minimum filter." << std::endl;
-    std::cout << "--max <filter_size>       - Applies a maximum filter." << std::endl;
-    std::cout << "--median <filter_size>    - Applies a median filter." << std::endl;
-    std::cout << "--mse, --pmse, --snr, --psnr, --md - Multiple similarity commands can be used together to compare images." << std::endl;
-    std::cout<< "--cmean --cvariance --cstdev --cvarcoi --casyco --cfsyco --cvarcoii --centropy     - Multiple image characteristic parameters that can be used together to display values." << std::endl;
-    std::cout<<"--sedgesharp <value>        - Applies a edge sharpening mask linear image filtration algorithm. The available values are 1, 2, 3. The matrices look as follows:" << std::endl;
-    printMatrix(SpatialOperations::h1, SpatialOperations::h2, SpatialOperations::h3);
-    std::cout<<"--hpower                    - Applies a power density function to the histogram. Gives two outputs: an changed image and an image histogram." <<std::endl;
-    std::cout<<"--orosenfeld                - Applies a rosenfeld operator non-linear spatial filtration algorithm."<<std::endl;
-
+    std::cout << "Pick which task you want the commands of:" << std::endl;
+    std::cout << "\t 0 - ALL, 1 - FIRST, 2 - SECOND, etc. 5 - ALL SE." << std::endl;
+    std::cin >> param;
+    switch(param) {
+        case 1:
+            std::cout << "\t TASK ONE COMMANDS" << std::endl;
+            std::cout << "--brightness <value>      - Adjusts the image's brightness." << std::endl;
+            std::cout << "--contrast <value>        - Adjusts the image's contrast." << std::endl;
+            std::cout << "--negative                - Inverts the colors of the image." << std::endl;
+            std::cout << "--hflip                   - Flips the image horizontally." << std::endl;
+            std::cout << "--vflip                   - Flips the image vertically." << std::endl;
+            std::cout << "--dflip                   - Diagonal flip of the image." << std::endl;
+            std::cout << "--shrink <factor>         - Shrinks the image." << std::endl;
+            std::cout << "--enlarge <factor>        - Enlarges the image." << std::endl;
+            std::cout << "--min <filter_size>       - Applies a minimum filter." << std::endl;
+            std::cout << "--max <filter_size>       - Applies a maximum filter." << std::endl;
+            std::cout << "--median <filter_size>    - Applies a median filter." << std::endl;
+            std::cout << "--mse, --pmse, --snr, --psnr, --md - Multiple similarity commands can be used together to compare images." << std::endl;
+        break;
+        case 2:
+            std::cout <<"\t TASK TWO COMMANDS" << std::endl;
+            std::cout<<"--sedgesharp <value>        - Applies a edge sharpening mask linear image filtration algorithm. The available values are 1, 2, 3. The matrices look as follows:" << std::endl;
+            printMatrix(SpatialOperations::h1, SpatialOperations::h2, SpatialOperations::h3);
+            std::cout<<"--hpower                    - Applies a power density function to the histogram. Gives two outputs: an changed image and an image histogram." <<std::endl;
+            std::cout<<"--orosenfeld                - Applies a rosenfeld operator non-linear spatial filtration algorithm."<<std::endl;
+            std::cout<< "--cmean --cvariance --cstdev --cvarcoi --casyco --cfsyco --cvarcoii --centropy     - Multiple image characteristic parameters that can be used together to display values." << std::endl;
+        break;
+        case 3:
+            std::cout <<"\t TASK THREE COMMANDS" << std::endl;
+        std::cout<<"--dilation <structuring_element_number>                    - Applies dilation operation with a given structuring element." << std::endl;
+        std::cout <<"--erosion <structuring_element_number>                    - Applies erosion operation with a given structuring element." << std::endl;
+        std::cout <<"--opening <structuring_element_number>                    - Applies opening operation with a given structuring element. It is dilated erosion." << std::endl;
+        std::cout <<"--closing <structuring_element_number>                    - Applies closing operation with a given structuring element. It is eroded dilation." << std::endl;
+        std::cout <<"--hmt <structuring_element_number>                        - Applies hit-or-miss operation with a given structuring element." << std::endl;
+        std::cout <<"--thinning                                                - Applies thinning operation. No parameter needed." << std::endl;
+        std::cout <<"--rgrowing <x> <y> <threshold>                            - Applies region growing with a <threshold> a seed pixel at (<x>,<y>) provided by the user. " << std::endl;
+        std::cout <<"Press 5 for available structuring element variants." << std::endl;
+        break;
+        case 5:
+            std::cout<<"\t AVAILABLE STRUCTURING ELEMENTS:" << std::endl;
+        for(int i = 1; i <= 10; i++) {
+            std::cout<< "SE_" << i << std::endl;
+            printSingleMatrix(MorphologicalBasic::assignNumberToStructuringElement(i));
+            std::cout<<"\n";
+        }
+        std::cout<<"\t HMT:" << std::endl;
+        for(int j = 1; j <= 12; j++) {
+            std::cout<< "SE_" << j << std::endl;
+            printSingleMatrix(MorphologicalBasic::assignNumberToSEHMT(j));
+            std::cout<<"\n";
+        }
+        break;
+        case 0:
+            std::cout<<"\n ALL COMMANDS:" << std::endl;
+        std::cout << "--brightness <value>      - Adjusts the image's brightness." << std::endl;
+        std::cout << "--contrast <value>        - Adjusts the image's contrast." << std::endl;
+        std::cout << "--negative                - Inverts the colors of the image." << std::endl;
+        std::cout << "--hflip                   - Flips the image horizontally." << std::endl;
+        std::cout << "--vflip                   - Flips the image vertically." << std::endl;
+        std::cout << "--dflip                   - Diagonal flip of the image." << std::endl;
+        std::cout << "--shrink <factor>         - Shrinks the image." << std::endl;
+        std::cout << "--enlarge <factor>        - Enlarges the image." << std::endl;
+        std::cout << "--min <filter_size>       - Applies a minimum filter." << std::endl;
+        std::cout << "--max <filter_size>       - Applies a maximum filter." << std::endl;
+        std::cout << "--median <filter_size>    - Applies a median filter." << std::endl;
+        std::cout << "--mse, --pmse, --snr, --psnr, --md                        - Multiple similarity commands can be used together to compare images." << std::endl;
+        std::cout<< "--cmean --cvariance --cstdev --cvarcoi --casyco --cfsyco --cvarcoii --centropy     - Multiple image characteristic parameters that can be used together to display values." << std::endl;
+        std::cout<<"--sedgesharp <value>        - Applies a edge sharpening mask linear image filtration algorithm. The available values are 1, 2, 3. The matrices look as follows:" << std::endl;
+        printMatrix(SpatialOperations::h1, SpatialOperations::h2, SpatialOperations::h3);
+        std::cout<<"--hpower                                                  - Applies a power density function to the histogram. Gives two outputs: an changed image and an image histogram." <<std::endl;
+        std::cout<<"--orosenfeld                                              - Applies a rosenfeld operator non-linear spatial filtration algorithm."<<std::endl;
+        std::cout<<"--dilation <structuring_element_number>                   - Applies dilation operation with a given structuring element." << std::endl;
+        std::cout <<"--erosion <structuring_element_number>                    - Applies erosion operation with a given structuring element." << std::endl;
+        std::cout <<"--opening <structuring_element_number>                    - Applies opening operation with a given structuring element. It is dilated erosion." << std::endl;
+        std::cout <<"--closing <structuring_element_number>                    - Applies closing operation with a given structuring element. It is eroded dilation." << std::endl;
+        std::cout <<"--hmt <structuring_element_number>                        - Applies hit-or-miss operation with a given structuring element." << std::endl;
+        std::cout <<"--thinning                                                - Applies thinning operation. No parameter needed." << std::endl;
+        std::cout <<"--rgrowing <x> <y> <threshold>                            - Applies region growing with a <threshold> a seed pixel at (<x>,<y>) provided by the user. " << std::endl;
+        std::cout <<"Press 5 while calling help() for available structuring element variants." << std::endl;
+        break;
+        default:
+            std::cout <<"WRONG INPUT. Returning..." << std::endl;
+            std::cin.clear();
+            break;
+    }
 }
 
 void CommandLineInterface::printMatrix(int h1[3][3], int h2[3][3], int h3[3][3]) {
