@@ -58,6 +58,7 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
     cimg_library::CImg<unsigned char> image(inputImage.c_str());
     cimg_library::CImg<unsigned char> outImage;
     bool comparisonImageLoaded = false;
+    bool isKnownCommand = true;
 
 
     int index = 3; // Starting from argv[3]
@@ -65,7 +66,7 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
         std::string command = argv[index];
         if (command == "--brightness" || command == "--contrast" || command == "--shrink" || command == "--enlarge" || command == "--min"
             || command == "--max" || command == "--median"|| command == "--histogram" || command == "--hpower" || command == "--orosenfeld" || command == "--sedgesharp" ||
-            command =="--erosion" || command =="--closing" || command =="--opening" || command == "--dilation" || command == "--hmt") {
+            command =="--erosion" || command =="--closing" || command =="--opening" || command == "--dilation" || command == "--hmt" || command == "--rgrowing") {
             if (index + 1 >= argc) {
                 std::cout << "Error: Missing parameter for " << command << " adjustment." << std::endl;
                 return;
@@ -138,7 +139,7 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
                 return;
             }
             else if (command =="--rgrowing") {
-                ImageSegmentation::regionGrowing(image,atoi(parameter.c_str()),atoi(argv[4]),atoi(argv[5]));
+                ImageSegmentation::regionGrowing(image,128,128,220);
             }
 
         } else if (command == "--negative") {
@@ -238,7 +239,7 @@ void CommandLineInterface::help() {
     int param;
     std::cout << "Usage: application <input_image_file> <output_image_file> <command(s)> [param]" << std::endl;
     std::cout << "Pick which task you want the commands of:" << std::endl;
-    std::cout << "\t 0 - ALL, 1 - FIRST, 2 - SECOND, etc. 5 - ALL SE." << std::endl;
+    std::cout << "0 - ALL, 1 - FIRST, 2 - SECOND, etc. 5 - ALL SE." << std::endl;
     std::cin >> param;
     switch(param) {
         case 1:
