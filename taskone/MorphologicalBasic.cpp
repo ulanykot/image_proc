@@ -127,6 +127,7 @@ bool imagesAreEqual(const cimg_library::CImg<unsigned char> &image1, const cimg_
     return true;
 }
 
+
 bool MorphologicalBasic::isInRange(const cimg_library::CImg<unsigned char> &image, const int x, const int y) {
     return x >= 0 && x < image.width() && y >= 0 && y < image.height();
 }
@@ -145,7 +146,6 @@ void MorphologicalBasic::dilation(cimg_library::CImg<unsigned char> &image, cons
                             if(se[i][j] == 1) {
                                 int new_x = x + (i - 1); // se[1][1] is the middle value that is why -1 here and
                                 int new_y = y + (j - 1); // here -1 too
-
                                 if (isInRange(filteredImage, new_x, new_y)) {
                                     filteredImage(new_x, new_y,0,c) = 255;
                                 }
@@ -171,7 +171,7 @@ void MorphologicalBasic::erosion(cimg_library::CImg<unsigned char> &image, const
                                 int new_x = x + (i - 1); // se[1][1] is the middle value that is why -1 here and
                                 int new_y = y + (j - 1); // here -1 too
 
-                                if (isInRange(image,new_x,new_y) || image(new_x,new_y) == 0) {
+                                if (isInRange(image,new_x,new_y) && image(new_x,new_y) == 0) {
                                     filteredImage(x, y,0,c) = 0;
                                 }
                             }
@@ -223,7 +223,7 @@ cimg_library::CImg<unsigned char> MorphologicalBasic::hitOrMiss(cimg_library::CI
                         else {
                             if (se[i][j] == 1) stateHit = false;
                             if (se[i][j] == 0) stateMiss = false;
-                        }
+                            }
                     }
                 }
                 if (stateMiss && stateHit) {
@@ -239,7 +239,9 @@ cimg_library::CImg<unsigned char> MorphologicalBasic::hitOrMiss(cimg_library::CI
 cimg_library::CImg<unsigned char> morphologicalSubtract(const cimg_library::CImg<unsigned char> &image, const cimg_library::CImg<unsigned char> &hmtResult) {
    cimg_library::CImg<unsigned char> result = image; // Initialize result with original image
     cimg_forXY(image, x, y) {
-        result(x, y) = (image(x, y) == 255 && hmtResult(x, y) == 0) ? 255 : 0;
+        for (int c = 0; c < image.spectrum(); c++) {
+            result(x, y, 0,c) = (image(x, y, 0, c) == 255 && hmtResult(x, y,0, c) == 0) ? 255 : 0;
+        }
     }
     return result;
 }

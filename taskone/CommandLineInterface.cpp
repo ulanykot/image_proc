@@ -139,7 +139,9 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
                 return;
             }
             else if (command =="--rgrowing") {
-                ImageSegmentation::regionGrowing(image,128,128,220);
+                std::string parameter2 = argv[++index];
+                std::string parameter3 = argv[++index];
+                ImageSegmentation::regionGrowing(image,atoi(parameter.c_str()),atoi((parameter2.c_str())),atoi(parameter3.c_str()));
             }
 
         } else if (command == "--negative") {
