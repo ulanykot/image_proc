@@ -23,5 +23,7 @@ add_executable(taskone main.cpp
         MorphologicalBasic.cpp
         MorphologicalBasic.h
         ImageSegmentation.cpp
-        ImageSegmentation.h)
+        ImageSegmentation.h
+        HelperFunctions.cpp
+        HelperFunctions.h)
 include_directories(cmake-build-debug/img/)

@@ -9,7 +9,7 @@
 
 class ImageSegmentation {
 public:
-     static void regionGrowing(cimg_library::CImg<unsigned char>& image, int xcoor, int ycoor, int threshold);
+     static void regionGrowing(cimg_library::CImg<unsigned char> &image, int xcoor, int ycoor, int threshold, int hcrit);
 };
 
 

@@ -141,7 +141,8 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
             else if (command =="--rgrowing") {
                 std::string parameter2 = argv[++index];
                 std::string parameter3 = argv[++index];
-                ImageSegmentation::regionGrowing(image,atoi(parameter.c_str()),atoi((parameter2.c_str())),atoi(parameter3.c_str()));
+                std::string parameter4 = argv[++index];
+                ImageSegmentation::regionGrowing(image,atoi(parameter.c_str()),atoi((parameter2.c_str())),atoi(parameter3.c_str()), atoi(parameter4.c_str()));
             }
 
         } else if (command == "--negative") {
@@ -160,17 +161,17 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
             // Measure time for non-optimized version
             int a[3][3] = { {0, -1, 0}, {-1, 5, -1}, {0, -1, 0} };
             auto start = std::chrono::high_resolution_clock::now();
-            SpatialOperations::convolve(image, a); // Call the function
+            MorphologicalBasic::thinning(image); // Call the function
             auto end = std::chrono::high_resolution_clock::now();
             auto duration = duration_cast<std::chrono::milliseconds>(end - start).count();
-            std::cout << "Convolve function time: " << duration << " ms" << std::endl;
+            std::cout << "Thinning function time: " << duration << " ms" << std::endl;
 
-            // Measure time for optimized version
-            auto startOpt = std::chrono::high_resolution_clock::now();
-            SpatialOperations::optimizedEdgeSharpening(image); // Call the function
-            auto endOpt = std::chrono::high_resolution_clock::now();
-            auto durationOpt = duration_cast<std::chrono::milliseconds>(endOpt - startOpt).count();
-            std::cout << "Optimized function time: " << durationOpt << " ms" << std::endl;
+            // // Measure time for optimized version
+            // auto startOpt = std::chrono::high_resolution_clock::now();
+            // SpatialOperations::optimizedEdgeSharpening(image); // Call the function
+            // auto endOpt = std::chrono::high_resolution_clock::now();
+            // auto durationOpt = duration_cast<std::chrono::milliseconds>(endOpt - startOpt).count();
+            // std::cout << "Optimized function time: " << durationOpt << " ms" << std::endl;
         }
         else if (command=="--help") {
             help();
@@ -275,7 +276,7 @@ void CommandLineInterface::help() {
         std::cout <<"--closing <structuring_element_number>                    - Applies closing operation with a given structuring element. It is eroded dilation." << std::endl;
         std::cout <<"--hmt <structuring_element_number>                        - Applies hit-or-miss operation with a given structuring element." << std::endl;
         std::cout <<"--thinning                                                - Applies thinning operation. No parameter needed." << std::endl;
-        std::cout <<"--rgrowing <x> <y> <threshold>                            - Applies region growing with a <threshold> a seed pixel at (<x>,<y>) provided by the user. " << std::endl;
+        std::cout <<"--rgrowing <x> <y> <threshold> <homogenity_criterium>     - Applies region growing with a <threshold> a seed pixel at (<x>,<y>) provided by the user. " << std::endl;
         std::cout <<"Press 5 for available structuring element variants." << std::endl;
         break;
         case 5:
