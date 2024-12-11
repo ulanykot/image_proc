@@ -18,6 +18,7 @@
 #include "MorphologicalBasic.h"
 #include "SimilarityMeasures.h"
 #include "SpatialOperations.h"
+#include "ImageSegmentation.h"
 
 bool isValidImageFile(const std::string& filePath) {
     std::ifstream file(filePath);
@@ -125,7 +126,17 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
                 newImage.save(outputImage.c_str());
                 return;
             }
+        } else if (command == "--regiongrow") {
+            if (index + 4 >= argc) {
+                std::cout << "Error: --regiongrow requires parameters <seedX> <seedY> <threshold> <distanceType>." << std::endl;
+                return;
+            }
+            int seedX = atoi(argv[++index]);
+            int seedY = atoi(argv[++index]);
+            int threshold = atoi(argv[++index]);
+            int distanceType = atoi(argv[++index]);
 
+            ImageSegmentation::regionGrowing(image, seedX, seedY, threshold, distanceType);
         } else if (command == "--negative") {
             BasicOperations::doNegative(image);
         } else if (command == "--hflip") {
@@ -141,14 +152,14 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
             auto start = std::chrono::high_resolution_clock::now();
             SpatialOperations::convolve(image, a); // Call the function
             auto end = std::chrono::high_resolution_clock::now();
-            auto duration = duration_cast<std::chrono::milliseconds>(end - start).count();
+            auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
             std::cout << "Convolve function time: " << duration << " ms" << std::endl;
 
             // Measure time for optimized version
             auto startOpt = std::chrono::high_resolution_clock::now();
             SpatialOperations::optimizedEdgeSharpening(image); // Call the function
             auto endOpt = std::chrono::high_resolution_clock::now();
-            auto durationOpt = duration_cast<std::chrono::milliseconds>(endOpt - startOpt).count();
+            auto durationOpt = std::chrono::duration_cast<std::chrono::milliseconds>(endOpt - startOpt).count();
             std::cout << "Optimized function time: " << durationOpt << " ms" << std::endl;
         }
         else if (command=="--help") {
@@ -217,26 +228,31 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
 }
 
 void CommandLineInterface::help() {
-    std::cout << "Usage: application <input_image_file> <output_image_file> <command(s)> [param]" << std::endl;
-    std::cout << "Possible commands: " << std::endl;
-    std::cout << "--brightness <value>      - Adjusts the image's brightness." << std::endl;
-    std::cout << "--contrast <value>        - Adjusts the image's contrast." << std::endl;
-    std::cout << "--negative                - Inverts the colors of the image." << std::endl;
-    std::cout << "--hflip                   - Flips the image horizontally." << std::endl;
-    std::cout << "--vflip                   - Flips the image vertically." << std::endl;
-    std::cout << "--dflip                   - Diagonal flip of the image." << std::endl;
-    std::cout << "--shrink <factor>         - Shrinks the image." << std::endl;
-    std::cout << "--enlarge <factor>        - Enlarges the image." << std::endl;
-    std::cout << "--min <filter_size>       - Applies a minimum filter." << std::endl;
-    std::cout << "--max <filter_size>       - Applies a maximum filter." << std::endl;
-    std::cout << "--median <filter_size>    - Applies a median filter." << std::endl;
-    std::cout << "--mse, --pmse, --snr, --psnr, --md - Multiple similarity commands can be used together to compare images." << std::endl;
+    std::cout<< "Usage: application <input_image_file> <output_image_file> <command(s)> [param]" << std::endl;
+    std::cout<< "Possible commands: " << std::endl;
+    std::cout<< "--brightness <value>        - Adjusts the image's brightness." << std::endl;
+    std::cout<< "--contrast <value>          - Adjusts the image's contrast." << std::endl;
+    std::cout<< "--negative                  - Inverts the colors of the image." << std::endl;
+    std::cout<< "--hflip                     - Flips the image horizontally." << std::endl;
+    std::cout<< "--vflip                     - Flips the image vertically." << std::endl;
+    std::cout<< "--dflip                     - Diagonal flip of the image." << std::endl;
+    std::cout<< "--shrink <factor>           - Shrinks the image." << std::endl;
+    std::cout<< "--enlarge <factor>          - Enlarges the image." << std::endl;
+    std::cout<< "--min <filter_size>         - Applies a minimum filter." << std::endl;
+    std::cout<< "--max <filter_size>         - Applies a maximum filter." << std::endl;
+    std::cout<< "--median <filter_size>      - Applies a median filter." << std::endl;
+    std::cout<< "--mse, --pmse, --snr, --psnr, --md - Multiple similarity commands can be used together to compare images." << std::endl;
     std::cout<< "--cmean --cvariance --cstdev --cvarcoi --casyco --cfsyco --cvarcoii --centropy     - Multiple image characteristic parameters that can be used together to display values." << std::endl;
-    std::cout<<"--sedgesharp <value>        - Applies a edge sharpening mask linear image filtration algorithm. The available values are 1, 2, 3. The matrices look as follows:" << std::endl;
+    std::cout<<"--sedgesharp <value>         - Applies a edge sharpening mask linear image filtration algorithm. The available values are 1, 2, 3. The matrices look as follows:" << std::endl;
     printMatrix(SpatialOperations::h1, SpatialOperations::h2, SpatialOperations::h3);
-    std::cout<<"--hpower                    - Applies a power density function to the histogram. Gives two outputs: an changed image and an image histogram." <<std::endl;
-    std::cout<<"--orosenfeld                - Applies a rosenfeld operator non-linear spatial filtration algorithm."<<std::endl;
-
+    std::cout<< "--hpower                    - Applies a power density function to the histogram. Gives two outputs: an changed image and an image histogram." <<std::endl;
+    std::cout<< "--orosenfeld                - Applies a rosenfeld operator non-linear spatial filtration algorithm."<<std::endl;
+    std::cout<< "--erosion <structural_element>     - Applies morphological erosion." << std::endl;
+    std::cout<< "--dilation <structural_element>    - Applies morphological dilation." << std::endl;
+    std::cout<< "--opening <structural_element>     - Applies morphological opening." << std::endl;
+    std::cout<< "--closing <structural_element>     - Applies morphological closing." << std::endl;
+    std::cout<< "--hmt <structural_element>         - Applies a hit-or-miss transform." << std::endl;
+    std::cout<< "--regiongrow <seedX> <seedY> <threshold> <distanceType>     - Performs region growing segmentation." << std::endl;
 }
 
 void CommandLineInterface::printMatrix(int h1[3][3], int h2[3][3], int h3[3][3]) {

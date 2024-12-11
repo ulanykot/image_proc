@@ -7,7 +7,7 @@
 #include <iostream>
 #include <ostream>
 
-#pragma region StructuingElements
+#pragma region StructuringElements
 std::array<std::array<int, 3>, 3> MorphologicalBasic::one = {{{0,0,0}, {0,1,0}, {0,1,0}}}; //right block
 std::array<std::array<int, 3>, 3> MorphologicalBasic::two = {{{0,0,0}, {0,1,1}, {0,0,0}}}; //bottom block
 std::array<std::array<int, 3>, 3> MorphologicalBasic::three = {{{1,1,1}, {1,1,1}, {1,1,1}}}; //square
