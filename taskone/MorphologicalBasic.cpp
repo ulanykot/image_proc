@@ -10,7 +10,7 @@
 #include "HelperFunctions.h"
 
 #pragma region StructuingElements
-std::array<std::array<int, 3>, 3> MorphologicalBasic::one = {{{0, 0, 0}, {0, 1, 0}, {0, 1, 0}}}; //right block
+std::array<std::array<int, 3>, 3> MorphologicalBasic::one = {{{1, 0, 0}, {1, 1, 1}, {0, 0, 0}}}; //right block
 std::array<std::array<int, 3>, 3> MorphologicalBasic::two = {{{0, 0, 0}, {0, 1, 1}, {0, 0, 0}}}; //bottom block
 std::array<std::array<int, 3>, 3> MorphologicalBasic::three = {{{1, 1, 1}, {1, 1, 1}, {1, 1, 1}}}; //square
 std::array<std::array<int, 3>, 3> MorphologicalBasic::four = {{{0, 1, 0}, {1, 1, 1}, {0, 1, 0}}}; //cross
@@ -24,7 +24,7 @@ std::array<std::array<int, 3>, 3> MorphologicalBasic::ten = {{{0, 0, 0}, {1, 1, 
 //dziubek middle na dole
 
 //HMT where 2 is the inactive part
-std::array<std::array<int, 3>, 3> MorphologicalBasic::eleven_left = {{{1, 1, 1}, {2, 0, 2}, {2, 2, 2}}};
+std::array<std::array<int, 3>, 3> MorphologicalBasic::eleven_left = {{{1, 0, 0}, {1, 1, 1}, {0, 0, 0}}};
 //pasek po lewo, srodek wylaczony
 std::array<std::array<int, 3>, 3> MorphologicalBasic::eleven_top = {{{1, 2, 2}, {1, 0, 2}, {1, 2, 2}}};
 //pasek od gory, srodek wylaczony

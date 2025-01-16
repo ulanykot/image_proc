@@ -136,6 +136,7 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
             else if(command =="--hmt") {
                 cimg_library::CImg<unsigned char> newImage = MorphologicalBasic::doHMT(image,atoi(parameter.c_str()));
                 newImage.save(outputImage.c_str());
+                std::cout << "Modified image saved as '" << outputImage << "'" << std::endl;
                 return;
             }
             else if (command =="--rgrowing") {
@@ -318,7 +319,7 @@ void CommandLineInterface::help() {
         std::cout <<"--closing <structuring_element_number>                    - Applies closing operation with a given structuring element. It is eroded dilation." << std::endl;
         std::cout <<"--hmt <structuring_element_number>                        - Applies hit-or-miss operation with a given structuring element." << std::endl;
         std::cout <<"--thinning                                                - Applies thinning operation. No parameter needed." << std::endl;
-        std::cout <<"--rgrowing <x> <y> <threshold>                            - Applies region growing with a <threshold> a seed pixel at (<x>,<y>) provided by the user. " << std::endl;
+        std::cout <<"--rgrowing <x> <y> <threshold> <criteria>                 - Applies region growing with a <threshold> a seed pixel at (<x>,<y>) provided by the user. " << std::endl;
         std::cout <<"Press 5 while calling help() for available structuring element variants." << std::endl;
         break;
         default:
