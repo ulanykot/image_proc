@@ -23,15 +23,15 @@ void ImageSegmentation::regionGrowing(cimg_library::CImg<unsigned char> &image, 
 
     // bool isChanged = true;
     while (!pixelQueue.empty()) {
-        auto [x, y] = pixelQueue.front(); // Get the front pixel
-        pixelQueue.pop();
+        auto [x, y] = pixelQueue.front(); //first pixel in queue: starts with seed, then goes to neighbours
+        pixelQueue.pop(); //ensures that the above taken pixel is not processed repeatedly
 
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
                 int new_x = x + i;
                 int new_y = y + j;
 
-                if (MorphologicalBasic::isInRange(image, new_x, new_y)) {
+                if (MorphologicalBasic::isInRange(image, new_x, new_y) && !mask(new_x, new_y)) {
                     int difference = 0;
 
                     //calc Euclidean distance between colors

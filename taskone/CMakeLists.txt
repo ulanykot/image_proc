@@ -25,5 +25,7 @@ add_executable(taskone main.cpp
         ImageSegmentation.cpp
         ImageSegmentation.h
         HelperFunctions.cpp
-        HelperFunctions.h)
+        HelperFunctions.h
+        FourierTransform.cpp
+        FourierTransform.h)
 include_directories(cmake-build-debug/img/)
