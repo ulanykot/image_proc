@@ -16,14 +16,17 @@ using complexVector2D = std::vector<complexVector>;
 class FourierTransform {
 public:
     static complexVector2D imageToComplexVector(cimg_library::CImg<unsigned char>& image);
+    static cimg_library::CImg<unsigned char> vectorToImage(complexVector2D& fourier);
     // 1D vector
     static void DFT1D(complexVector& vector, bool inverse);
     static void FFT1D(complexVector& vector, bool inverse);
 
     // full
-    static void discreteFourier(cimg_library::CImg<unsigned char>& image, bool inverse);
-    static void fastFourier(cimg_library::CImg<unsigned char>& image, bool inverse);
-    static cimg_library::CImg<unsigned char> vectorToImage(complexVector2D& fourier);
+    static complexVector2D discreteFourier(cimg_library::CImg<unsigned char>& image, bool inverse);
+    static complexVector2D fastFourier(cimg_library::CImg<unsigned char>& image, bool inverse);
+
+    //visualization
+    static cimg_library::CImg<unsigned char> visualizeSpectrum(complexVector2D& vector);
 };
 
 

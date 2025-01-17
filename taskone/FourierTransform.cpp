@@ -6,8 +6,8 @@
 
 //helper functions
 complexVector2D FourierTransform::imageToComplexVector(cimg_library::CImg<unsigned char> &image) {
-    int width = image.width();
-    int height = image.height();
+    const size_t width = image.width();
+    const size_t height = image.height();
     complexVector2D result(height, std::vector<complex>(width));
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
@@ -18,12 +18,20 @@ complexVector2D FourierTransform::imageToComplexVector(cimg_library::CImg<unsign
 }
 
 cimg_library::CImg<unsigned char> FourierTransform::vectorToImage(complexVector2D &fourier) {
-    return cimg_library::CImg<unsigned char>();
+    const size_t height = fourier.size();
+    const size_t width = fourier[0].size();
+    cimg_library::CImg<unsigned char> result(width, height, 1, 1, 0);
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            result(x, y) = (unsigned char)std::abs(fourier[y][x].real());
+        }
+    }
+    return result;
 }
 
 //1d transforms
 void FourierTransform::DFT1D(complexVector &vector, bool inverse) {
-    const int N = vector.size();
+    const size_t N = vector.size();
     int sign = 1;
     if (inverse) {
         sign = -sign;
@@ -45,7 +53,7 @@ void FourierTransform::DFT1D(complexVector &vector, bool inverse) {
 
 //recursively
 void FourierTransform::FFT1D(complexVector &vector, bool inverse) {
-    const int N = vector.size();
+    const size_t N = vector.size();
     int sign = -1;
     if (inverse) {
         sign = -sign;
@@ -75,7 +83,7 @@ void FourierTransform::FFT1D(complexVector &vector, bool inverse) {
 }
 
 //2d transforms
-void FourierTransform::discreteFourier(cimg_library::CImg<unsigned char> &image, bool inverse) {
+complexVector2D FourierTransform::discreteFourier(cimg_library::CImg<unsigned char> &image, bool inverse) {
     complexVector2D imageVector = imageToComplexVector(image);
     for (auto& row : imageVector) {
         DFT1D(row, inverse);
@@ -90,9 +98,10 @@ void FourierTransform::discreteFourier(cimg_library::CImg<unsigned char> &image,
             imageVector[j][i] = column[j];
         }
     }
+    return imageVector;
 }
 
-void FourierTransform::fastFourier(cimg_library::CImg<unsigned char> &image, bool inverse) {
+complexVector2D FourierTransform::fastFourier(cimg_library::CImg<unsigned char> &image, bool inverse) {
     complexVector2D imageVector = imageToComplexVector(image);
     for (auto& row : imageVector) {
         FFT1D(row, inverse);
@@ -107,4 +116,30 @@ void FourierTransform::fastFourier(cimg_library::CImg<unsigned char> &image, boo
             imageVector[j][i] = column[j];
         }
     }
+    return imageVector;
+}
+
+cimg_library::CImg<unsigned char> FourierTransform::visualizeSpectrum(complexVector2D &vector) {
+    const size_t width = vector.size();
+    const size_t height = vector[0].size();
+
+    cimg_library::CImg<std::complex<float>> complex_img(width, height);
+
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            complex_img(x, y) = vector[y][x];
+        }
+    }
+    cimg_library::CImg<double> magnitude(width, height);
+
+    cimg_forXY(complex_img, x, y) {
+        magnitude(x, y) = std::abs(complex_img(x, y));
+    }
+
+    cimg_library::CImg<unsigned char> output_image(width, height);
+    cimg_forXY(magnitude, x, y) {
+        output_image(x, y) = static_cast<unsigned char>(magnitude(x, y) * 255.0 / magnitude.max());
+    }
+    return output_image;
+    //no phase cuz grascale
 }
