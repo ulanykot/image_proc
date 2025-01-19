@@ -5,14 +5,18 @@
 #ifndef FREQUENCYFILTERS_H
 #define FREQUENCYFILTERS_H
 #include "CImg.h"
+#include "FourierTransform.h"
 
 
 class FrequencyFilters {
 public:
-    static void lowPass(cimg_library::CImg<unsigned char> &image, int area);
+    static complexVector2D lowPass(complexVector2D imageVector, int area);
+
+    static void doLowPass(cimg_library::CImg<unsigned char> &image, int area);
+
     static void highPass(cimg_library::CImg<unsigned char> &image, int area);
-    static void bandPass(cimg_library::CImg<unsigned char> &image, int low, int high);
-    static void bandCut(cimg_library::CImg<unsigned char> &image, int low, int high);
+    static void bandPass(cimg_library::CImg<unsigned char> &image, int center, int bandwidth);
+    static void bandCut(cimg_library::CImg<unsigned char> &image, int center, int bandwidth);
     static void highPassTwo(cimg_library::CImg<unsigned char> &image, int area);
     static void phaseMod();
 };
