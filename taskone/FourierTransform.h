@@ -22,11 +22,17 @@ public:
     static void FFT1D(complexVector& vector, bool inverse);
 
     // full
-    static complexVector2D discreteFourier(cimg_library::CImg<unsigned char>& image, bool inverse);
-    static complexVector2D fastFourier(cimg_library::CImg<unsigned char>& image, bool inverse);
+    static complexVector2D discreteFourier(complexVector2D& imageVector, bool inverse);
+    static complexVector2D fastFourier(complexVector2D& imageVector, bool inverse);
 
     //visualization
     static cimg_library::CImg<unsigned char> visualizeSpectrum(complexVector2D& vector);
+
+    static void performDFT(cimg_library::CImg<unsigned char>& image);
+    static cimg_library::CImg<unsigned char> performIDFT(complexVector2D& vector);
+
+    static complexVector2D performFFT(cimg_library::CImg<unsigned char> &image);
+    static cimg_library::CImg<unsigned char> performIFFT(complexVector2D& vector);
 };
 
 

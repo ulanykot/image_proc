@@ -27,5 +27,7 @@ add_executable(taskone main.cpp
         HelperFunctions.cpp
         HelperFunctions.h
         FourierTransform.cpp
-        FourierTransform.h)
+        FourierTransform.h
+        FrequencyFilters.cpp
+        FrequencyFilters.h)
 include_directories(cmake-build-debug/img/)

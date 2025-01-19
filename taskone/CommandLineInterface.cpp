@@ -13,6 +13,7 @@
 #include "BasicOperations.h"
 #include "CImg.h"
 #include "FilterOperations.h"
+#include "FourierTransform.h"
 #include "HistogramComputations.h"
 #include "ImageCharacteristics.h"
 #include "ImageSegmentation.h"
@@ -66,7 +67,8 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
         std::string command = argv[index];
         if (command == "--brightness" || command == "--contrast" || command == "--shrink" || command == "--enlarge" || command == "--min"
             || command == "--max" || command == "--median"|| command == "--histogram" || command == "--hpower" || command == "--orosenfeld" || command == "--sedgesharp" ||
-            command =="--erosion" || command =="--closing" || command =="--opening" || command == "--dilation" || command == "--hmt" || command == "--rgrowing") {
+            command =="--erosion" || command =="--closing" || command =="--opening" || command == "--dilation" || command == "--hmt" || command == "--rgrowing"
+            || command =="--dodft" || command =="--dofft") {
             if (index + 1 >= argc) {
                 std::cout << "Error: Missing parameter for " << command << " adjustment." << std::endl;
                 return;
@@ -144,6 +146,16 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
                 std::string parameter3 = argv[++index];
                 std::string parameter4 = argv[++index];
                 ImageSegmentation::regionGrowing(image,atoi(parameter.c_str()),atoi((parameter2.c_str())),atoi(parameter3.c_str()), atoi(parameter4.c_str()));
+            }
+            else if (command =="--dodft") {
+                if(atoi(parameter.c_str()) == 0) {
+                    FourierTransform::performDFT(image);
+                }
+            }
+            else if (command =="--dofft") {
+                if(atoi(parameter.c_str()) == 0) {
+                    FourierTransform::performFFT(image);
+                }
             }
 
         } else if (command == "--negative") {
