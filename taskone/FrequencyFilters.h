@@ -17,8 +17,8 @@ public:
     static void highPass(cimg_library::CImg<unsigned char> &image, int area);
     static void bandPass(cimg_library::CImg<unsigned char> &image, int center, int bandwidth);
     static void bandCut(cimg_library::CImg<unsigned char> &image, int center, int bandwidth);
-    static void highPassTwo(cimg_library::CImg<unsigned char> &image, int area);
-    static void phaseMod();
+    static void highPassTwo(cimg_library::CImg<unsigned char> &image, const cimg_library::CImg<unsigned char> &mask, int area);
+    static void phaseMod(cimg_library::CImg<unsigned char> &image, int k, int l);
 };
 
 

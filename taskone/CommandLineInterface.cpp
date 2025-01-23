@@ -14,6 +14,7 @@
 #include "CImg.h"
 #include "FilterOperations.h"
 #include "FourierTransform.h"
+#include "FrequencyFilters.h"
 #include "HistogramComputations.h"
 #include "ImageCharacteristics.h"
 #include "ImageSegmentation.h"
@@ -59,7 +60,6 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
     cimg_library::CImg<unsigned char> image(inputImage.c_str());
     cimg_library::CImg<unsigned char> outImage;
     bool comparisonImageLoaded = false;
-    bool isKnownCommand = true;
 
 
     int index = 3; // Starting from argv[3]
@@ -68,7 +68,7 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
         if (command == "--brightness" || command == "--contrast" || command == "--shrink" || command == "--enlarge" || command == "--min"
             || command == "--max" || command == "--median"|| command == "--histogram" || command == "--hpower" || command == "--orosenfeld" || command == "--sedgesharp" ||
             command =="--erosion" || command =="--closing" || command =="--opening" || command == "--dilation" || command == "--hmt" || command == "--rgrowing"
-            || command =="--dodft" || command =="--dofft") {
+            || command == "--lpass" || command == "--hpass" || command =="--bpass" || command == "--bcut" || command =="--hpedge" || command =="--pmod") {
             if (index + 1 >= argc) {
                 std::cout << "Error: Missing parameter for " << command << " adjustment." << std::endl;
                 return;
@@ -147,17 +147,29 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
                 std::string parameter4 = argv[++index];
                 ImageSegmentation::regionGrowing(image,atoi(parameter.c_str()),atoi((parameter2.c_str())),atoi(parameter3.c_str()), atoi(parameter4.c_str()));
             }
-            else if (command =="--dodft") {
-                if(atoi(parameter.c_str()) == 0) {
-                    FourierTransform::performDFT(image);
-                }
+            else if(command == "--lpass") {
+                FrequencyFilters::doLowPass(image,atoi(parameter.c_str()));
             }
-            else if (command =="--dofft") {
-                if(atoi(parameter.c_str()) == 0) {
-                    FourierTransform::performFFT(image);
-                }
+            else if(command == "--hpass") {
+                FrequencyFilters::highPass(image,atoi(parameter.c_str()));
             }
-
+            else if(command =="--bpass") {
+                std::string parameter2 = argv[++index];
+                FrequencyFilters::bandPass(image,atoi(parameter.c_str()), atoi(parameter2.c_str()));
+            }
+            else if(command =="--bcut") {
+                std::string parameter2 = argv[++index];
+                FrequencyFilters::bandCut(image,atoi(parameter.c_str()), atoi(parameter2.c_str()));
+            }
+            else if(command =="--hpedge") {
+                cimg_library::CImg<unsigned char> mask(parameter.c_str());
+                std::string parameter2 = argv[++index];
+                FrequencyFilters::highPassTwo(image, mask, atoi(parameter2.c_str()));
+            }
+            else if(command =="--pmod") {
+                std::string parameter2 = argv[++index];
+                FrequencyFilters::phaseMod(image,atoi(parameter.c_str()), atoi(parameter2.c_str()));
+            }
         } else if (command == "--negative") {
             BasicOperations::doNegative(image);
         } else if (command == "--hflip") {
@@ -166,6 +178,12 @@ void CommandLineInterface::parseCommand(int argc, char *argv[]) {
             BasicOperations::doVerticalFlip(image);
         } else if (command == "--dflip") {
             BasicOperations::doDiagonalFlip(image);
+        }
+        else if (command =="--dodft") {
+            FourierTransform::performDFT(image);
+        }
+        else if (command =="--dofft") {
+            FourierTransform::performFFT(image);
         }
         else if(command == "--thinning") {
             MorphologicalBasic::thinning(image);

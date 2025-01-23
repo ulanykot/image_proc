@@ -16,6 +16,9 @@ using complexVector2D = std::vector<complexVector>;
 class FourierTransform {
 public:
     static complexVector2D imageToComplexVector(cimg_library::CImg<unsigned char>& image);
+
+    static complexVector2D imageToComplexVector(const cimg_library::CImg<double> &image);
+
     static cimg_library::CImg<unsigned char> vectorToImage(complexVector2D& fourier);
     // 1D vector
     static void DFT1D(complexVector& vector, bool inverse);
@@ -26,13 +29,16 @@ public:
     static complexVector2D fastFourier(complexVector2D& imageVector, bool inverse);
 
     //visualization
-    static cimg_library::CImg<unsigned char> visualizeSpectrum(complexVector2D& vector);
+    static cimg_library::CImg<unsigned char> visualizeSpectrum(complexVector2D &vector);
 
-    static void performDFT(cimg_library::CImg<unsigned char>& image);
+    static complexVector2D performDFT(cimg_library::CImg<unsigned char> &image);
     static cimg_library::CImg<unsigned char> performIDFT(complexVector2D& vector);
 
     static complexVector2D performFFT(cimg_library::CImg<unsigned char> &image);
     static cimg_library::CImg<unsigned char> performIFFT(complexVector2D& vector);
+
+    static complexVector2D filterFFT(cimg_library::CImg<unsigned char> &image);
+    static complexVector2D filterDFT(cimg_library::CImg<unsigned char> &image);
 };
 
 

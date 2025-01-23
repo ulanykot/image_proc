@@ -20,15 +20,41 @@ complexVector2D FourierTransform::imageToComplexVector(cimg_library::CImg<unsign
     return result;
 }
 
+complexVector2D FourierTransform::imageToComplexVector(const cimg_library::CImg<double>& image) {
+    int width = image.width();
+    int height = image.height();
+    complexVector2D result(height, std::vector<complex>(width));
+    cimg_forXY(image, x, y) {
+        result[y][x] = complex(image(x, y, 0, 0), image(x, y, 1, 0));
+    }
+    return result;
+}
+
 cimg_library::CImg<unsigned char> FourierTransform::vectorToImage(complexVector2D &fourier) {
     const size_t height = fourier.size();
     const size_t width = fourier[0].size();
     cimg_library::CImg<unsigned char> result(width, height, 1, 1, 0);
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
-            result(x, y) = static_cast<unsigned char>(std::abs(fourier[y][x].real()));
+
+    // Find the min and max real values in the vector
+    double minVal = std::numeric_limits<double>::max();
+    double maxVal = std::numeric_limits<double>::lowest();
+
+    for (size_t y = 0; y < height; y++) {
+        for (size_t x = 0; x < width; x++) {
+            double realPart = fourier[x][y].real();
+            minVal = std::min(minVal, realPart);
+            maxVal = std::max(maxVal, realPart);
         }
     }
+
+    // Normalize and clamp the values to [0, 255]
+    for (size_t y = 0; y < height; y++) {
+        for (size_t x = 0; x < width; x++) {
+            double normalized = 255.0 * (fourier[x][y].real() - minVal) / (maxVal - minVal);
+            result(x, y) = static_cast<unsigned char>(std::clamp(normalized, 0.0, 255.0));
+        }
+    }
+
     return result;
 }
 
@@ -84,6 +110,12 @@ void FourierTransform::FFT1D(complexVector &vector, bool inverse) {
         rBitValue ^= bit;
         if (bitValue < rBitValue) {
             std::swap(vector[bitValue], vector[rBitValue]);
+        }
+    }
+
+    if (inverse) {
+        for(size_t i = 0; i < N; i++) {
+            vector[i] /= N;
         }
     }
 }
@@ -148,10 +180,11 @@ cimg_library::CImg<unsigned char> FourierTransform::visualizeSpectrum(complexVec
     return output_image;
 }
 
-void FourierTransform::performDFT(cimg_library::CImg<unsigned char> &image) {
+complexVector2D FourierTransform::performDFT(cimg_library::CImg<unsigned char> &image) {
     complexVector2D imageVector = imageToComplexVector(image);
     discreteFourier(imageVector, false);
     image = visualizeSpectrum(imageVector);
+    return imageVector;
 }
 
 cimg_library::CImg<unsigned char> FourierTransform::performIDFT(complexVector2D& vector) {
@@ -159,7 +192,6 @@ cimg_library::CImg<unsigned char> FourierTransform::performIDFT(complexVector2D&
     cimg_library::CImg<unsigned char> result = vectorToImage(vector);
     return result;
 }
-
 
 complexVector2D FourierTransform::performFFT(cimg_library::CImg<unsigned char> &image) {
     complexVector2D imageVector = imageToComplexVector(image);
@@ -172,4 +204,16 @@ cimg_library::CImg<unsigned char> FourierTransform::performIFFT(complexVector2D&
     fastFourier(vector, true); // after this input is only real part
     cimg_library::CImg<unsigned char> result = vectorToImage(vector);
     return result;
+}
+
+complexVector2D FourierTransform::filterFFT(cimg_library::CImg<unsigned char> &image) {
+    complexVector2D imageVector = imageToComplexVector(image);
+    fastFourier(imageVector, false);
+    return imageVector;
+}
+
+complexVector2D FourierTransform::filterDFT(cimg_library::CImg<unsigned char> &image) {
+    complexVector2D imageVector = imageToComplexVector(image);
+    fastFourier(imageVector, false);
+    return imageVector;
 }
